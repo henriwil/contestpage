@@ -13,7 +13,7 @@ export async function handler(event) {
   try {
     const clubId = event.queryStringParameters?.clubId;
     if (!clubId) {
-      return { statusCode: 400, body: "Missing clubId" };
+      return { statusCode: 400, body: JSON.stringify({ error: "Missing clubId" }) };
     }
 
     if (event.httpMethod === "GET") {
@@ -46,12 +46,9 @@ export async function handler(event) {
       return { statusCode: 200, body: JSON.stringify(list) };
     }
 
-    return { statusCode: 405, body: "Method not allowed" };
+    return { statusCode: 405, body: JSON.stringify({ error: "Method not allowed" }) };
   } catch (err) {
     console.error("participants error:", err);
-    return {
-      statusCode: 500,
-      body: JSON.stringify({ error: err.message || "Unknown error" }),
-    };
+    return { statusCode: 500, body: JSON.stringify({ error: err.message }) };
   }
 }
