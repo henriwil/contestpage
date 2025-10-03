@@ -166,9 +166,28 @@ tbody tr:nth-child(odd) { background: #fafafa; }
 .feedback-fab:hover { background: #001a2e; transform: translateY(-2px); }
 
 /* Leaderboard & Graph: 50/50 desktop; stacked mobile */
-.grid-2 { display: grid; gap: 20px; grid-template-columns: 1fr 1fr; align-items: stretch; }
+/* --- Grid layout --- */
+.grid-2 { 
+  display: grid; 
+  gap: 20px; 
+  grid-template-columns: 1fr 1fr; 
+  align-items: stretch; 
+}
 .grid-2 > .card { height: 100%; }
-@media(max-width: 900px) { .grid-2 { grid-template-columns: 1fr; } }
+
+/* Mobile: stack and use full width */
+@media(max-width: 900px) {
+  .grid-2 {
+    grid-template-columns: 1fr; /* stack vertically */
+  }
+  .grid-2 > .card {
+    width: 100%;      /* stretch to full screen width */
+    box-sizing: border-box;
+  }
+  #main {
+    padding: 16px 10px; /* less side padding on mobile so cards look wide */
+  }
+}
 
 /* Header */
 .row.header-row {
