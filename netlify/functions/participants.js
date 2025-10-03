@@ -1,10 +1,16 @@
-// netlify/functions/participants.js
 import { getStore } from "@netlify/blobs";
-
-const store = getStore({ name: "participants" }); 
 
 export async function handler(event) {
   try {
+    console.log("SITE_ID:", process.env.NETLIFY_SITE_ID ? "exists" : "missing");
+    console.log("BLOBS_TOKEN:", process.env.NETLIFY_BLOBS_TOKEN ? "exists" : "missing");
+
+    const store = getStore({
+      name: "participants",
+      siteID: process.env.NETLIFY_SITE_ID,
+      token: process.env.NETLIFY_BLOBS_TOKEN,
+    });
+
     const clubId = event.queryStringParameters?.clubId;
     if (!clubId) return { statusCode: 400, body: "Missing clubId" };
 
@@ -18,6 +24,14 @@ export async function handler(event) {
       const list = (await store.get(clubId, { type: "json" })) || [];
       if (!body.id) body.id = Date.now().toString();
       list.push(body);
+      await store.setJSON(clubId, list);
+      return { statusCode: 200, body: JSON.stringify({ ok: true, participants: list }) };
+    }
+
+    if (event.httpMethod === "PUT") {
+      const body = JSON.parse(event.body || "{}");
+      let list = (await store.get(clubId, { type: "json" })) || [];
+      list = list.map((p) => (p.id === body.id ? body : p));
       await store.setJSON(clubId, list);
       return { statusCode: 200, body: JSON.stringify({ ok: true, participants: list }) };
     }
