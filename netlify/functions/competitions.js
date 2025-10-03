@@ -1,20 +1,10 @@
-import { connectLambda, getStore } from "@netlify/blobs";
+// netlify/functions/competitions.js
+import { getStore } from "@netlify/blobs";
+
+const store = getStore({ name: "competitions" }); 
 
 export async function handler(event) {
-  // Debug environment variables
-  console.log("SITE_ID", process.env.NETLIFY_SITE_ID);
-  console.log("BLOBS_TOKEN", process.env.NETLIFY_BLOBS_TOKEN ? "exists" : "missing");
-
   try {
-    // Required for Lambda compatibility
-    await connectLambda({ event });
-
-    const store = getStore({
-      name: "competitions", // store name
-      siteID: process.env.NETLIFY_SITE_ID,
-      token: process.env.NETLIFY_BLOBS_TOKEN,
-    });
-
     if (event.httpMethod === "GET") {
       const all = (await store.get("list", { type: "json" })) || {};
       return { statusCode: 200, body: JSON.stringify(all) };
@@ -26,8 +16,8 @@ export async function handler(event) {
 
       const all = (await store.get("list", { type: "json" })) || {};
       all[body.id] = body;
-
       await store.setJSON("list", all);
+
       return { statusCode: 200, body: JSON.stringify({ ok: true, competition: body }) };
     }
 
