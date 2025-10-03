@@ -11,12 +11,13 @@ window.clubs = [
   { name: "Kalbakken", id: "213" },
   { name: "Linderud", id: "214" },
   { name: "Karlsrud", id: "216" },
-  { name: "Lambertseter", id: "217" }
+  { name: "Lambertseter", id: "217" },
+   { name: "Drammen", id: "106" }
 
   
   /*,
   { name: "Nesttun", id: "104" },
-  { name: "Drammen", id: "106" },
+ 
   { name: "Bergen LHG", id: "114" },
   { name: "Hoff", id: "116" },
   { name: "Hellerud", id: "130" },
