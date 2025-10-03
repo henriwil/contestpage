@@ -1,16 +1,19 @@
 window.clubs = [
   { name: "Blox", id: "429" },
+  { name: "Metro", id: "149" },
+  { name: "Akersgata", id: "166" },
+  { name: "Fornebu", id: "253" },
+  { name: "Sjølyst", id: "220" },
+  { name: "Sandvika Panorama", id: "222" },
+  
   { name: "CC Vest", id: "210" },
   { name: "Colosseum", id: "212" },
   { name: "Kalbakken", id: "213" },
   { name: "Linderud", id: "214" },
   { name: "Karlsrud", id: "216" },
-  { name: "Lambertseter", id: "217" },
-  { name: "Metro", id: "149" },
-  { name: "Akersgata", id: "166" },
-  { name: "Fornebu", id: "253" },
-  { name: "Sjølyst", id: "220" },
-  { name: "Sandvika Panorama", id: "222" }
+  { name: "Lambertseter", id: "217" }
+
+  
   /*,
   { name: "Nesttun", id: "104" },
   { name: "Drammen", id: "106" },
