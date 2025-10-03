@@ -1,5 +1,12 @@
 window.clubs = [
   { name: "Blox", id: "429" },
+  { name: "CC Vest", id: "210" },
+  { name: "Colosseum", id: "212" },
+  { name: "Kalbakken", id: "213" },
+  { name: "Linderud", id: "214" },
+  { name: "Karlsrud", id: "216" },
+  { name: "Lambertseter", id: "217" }
+  /*,
   { name: "Nesttun", id: "104" },
   { name: "Drammen", id: "106" },
   { name: "Bergen LHG", id: "114" },
@@ -74,5 +81,5 @@ window.clubs = [
   { name: "Triaden", id: "271" },
   { name: "Skedsmokorset", id: "272" },
   { name: "SATS Yoga Majorstuen", id: "801" },
-  { name: "SATS Yoga Aker Brygge", id: "802" }
+  { name: "SATS Yoga Aker Brygge", id: "802" }*/
 ];
