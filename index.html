@@ -7,6 +7,8 @@
 
 <!-- Chart.js -->
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"></script>
+<!-- Confetti -->
+<script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.2/dist/confetti.browser.min.js"></script>
 <!-- Clubs data -->
 <script src="clubs.js"></script>
 
@@ -127,11 +129,8 @@ let state={competitions:{},players:[],active:null,activeClub:""};
 let chart, chartRange="all";
 
 function fmtShort(dateStr){
-  const d=new Date(dateStr+"T00:00");
-  const dd=String(d.getDate()).padStart(2,"0");
-  const mm=String(d.getMonth()+1).padStart(2,"0");
-  const yy=String(d.getFullYear()).slice(-2);
-  return `${dd}/${mm}/${yy}`;
+  const d = new Date(dateStr + "T00:00:00");
+  return d.toLocaleDateString("no-NO", { day: "2-digit", month: "2-digit", year: "2-digit" });
 }
 
 /* --- Backend calls --- */
@@ -237,6 +236,13 @@ async function inc(pid){
   c.events.push({ pid, time: Date.now(), delta: +1 });
   await saveCompetition(c);
   render();
+
+  // 🎉 Confetti burst
+  confetti({
+    particleCount: 60,
+    spread: 70,
+    origin: { y: 0.8 }
+  });
 }
 
 async function dec(pid){
@@ -247,60 +253,33 @@ async function dec(pid){
   await saveCompetition(c);
   render();
 }
+
 /* --- Chart --- */
 const BRAND_COLORS=["#009fdb","#002b45","#56c271","#f4a261","#e76f51"];
 function colorFor(pid,idx){if(idx<BRAND_COLORS.length)return BRAND_COLORS[idx]; let h=0; for(let i=0;i<pid.length;i++)h=(h*31+pid.charCodeAt(i))%360; return `hsl(${h} 55% 60%)`;}
 function buildDateLabels(c) {
   const arr = [];
   let start = new Date(c.start + "T00:00:00");
-  let end = new Date(); // always go until today
+
+  // always end at local today (not UTC yesterday)
+  let today = new Date();
+  today.setHours(23,59,59,999);
+  let end = today;
+
   const compEnd = new Date(c.end + "T23:59:59");
   if (compEnd > end) end = compEnd;
 
-  for (let dt = new Date(start); dt <= end; dt.setDate(dt.getDate() + 1)) {
-    arr.push(dt.toISOString().slice(0, 10));
+  for (let dt = new Date(start); dt <= end; dt.setDate(dt.getDate()+1)) {
+    const local = new Date(dt);
+    arr.push(local.toISOString().slice(0,10));
   }
   return arr;
 }
 
-function buildChart() {
-  const c = active();
-  if (!c) return;
-  const ctx = document.getElementById("chart").getContext("2d");
-  const labels = buildDateLabels(c);
-
-  const datasets = state.players.map((p, idx) => {
-    const data = labels.map(d => {
-      const dayEnd = new Date(d + "T23:59:59").getTime();
-      return c.events.filter(ev => ev.pid === p.id && ev.time <= dayEnd).length;
-    });
-    return {
-      label: p.name,
-      data,
-      borderColor: colorFor(p.id, idx),
-      borderWidth: 2,
-      tension: 0.25,
-      pointRadius: 0,
-    };
-  });
-
-  const maxScore = Math.max(1, ...datasets.flatMap(ds => ds.data));
-  if (chart) chart.destroy();
-  chart = new Chart(ctx, {
-    type: "line",
-    data: { labels: labels.map(fmtShort), datasets },
-    options: {
-      maintainAspectRatio: false,
-      scales: {
-        x: { ticks: { maxTicksLimit: 8 } },
-        y: { beginAtZero: true, suggestedMax: maxScore + 2 },
-      },
-    },
-  });
-}function buildChart(){
+function buildChart(){
   const c = active();
   if(!c) return;
-  const ctx = document.getElementById("chart").getContext("2d");
+  const ctx=document.getElementById("chart").getContext("2d");
 
   const labels = buildDateLabels(c);
 
@@ -308,7 +287,6 @@ function buildChart() {
     let score = 0;
     const data = labels.map(d=>{
       const dayEnd = new Date(d+"T23:59:59").getTime();
-      // sum deltas instead of counting events
       score = c.events
         .filter(ev => ev.pid === p.id && ev.time <= dayEnd)
         .reduce((acc,ev)=> acc + (ev.delta || 1), 0);
@@ -338,7 +316,6 @@ function buildChart() {
   });
 }
 
-  
 /* --- Render --- */
 function renderCompetitions(){
   const list=document.getElementById("competitions"); list.innerHTML="";
@@ -382,13 +359,4 @@ document.getElementById("btnNewComp").onclick=newComp;
 document.getElementById("btnManage").onclick=openModal;
 document.getElementById("btnDraw").onclick=drawWinner;
 document.getElementById("btnEnd").onclick=endNow;
-document.getElementById("btnAddPart").onclick=()=>{const v=document.getElementById("newPart").value.trim(); if(v) addPlayer(v); document.getElementById("newPart").value="";};
-document.getElementById("rangeAll").onclick=()=>{chartRange="all"; buildChart();};
-document.getElementById("range30").onclick=()=>{chartRange="30"; buildChart();};
-document.getElementById("range7").onclick=()=>{chartRange="7"; buildChart();};
-
-/* --- Start --- */
-window.onload = () => { loadClubs(); };
-</script>
-</body>
-</html>
+document.getElementById("btnAddPart").onclick=()=>{const v=document.getElementById("newPart").value.trim(); if(v) addPlayer(v); document.getElementById("newPart").value="";
