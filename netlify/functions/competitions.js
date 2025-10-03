@@ -1,35 +1,40 @@
-import { getStore } from "@netlify/blobs";
+export { getStore } from "@netlify/blobs";
 
 export async function handler(event) {
   try {
-    const store = getStore({
-      name: "competitions",
-      siteID: process.env.NETLIFY_SITE_ID,
-      token: process.env.NETLIFY_BLOBS_TOKEN,
-    });
+    // Simplified - Netlify provides context automatically
+    const store = getStore("participants");
+
+    const clubId = event.queryStringParameters?.clubId;
+    if (!clubId) {
+      return { statusCode: 400, body: JSON.stringify({ error: "Missing clubId" }) };
+    }
 
     if (event.httpMethod === "GET") {
-      const all = (await store.get("list", { type: "json" })) || {};
-      return { statusCode: 200, body: JSON.stringify(all) };
+      const list = (await store.get(clubId, { type: "json" })) || [];
+      return { statusCode: 200, body: JSON.stringify(list) };
     }
 
     if (event.httpMethod === "POST") {
       const body = JSON.parse(event.body || "{}");
-      if (!body.id) {
-        return {
-          statusCode: 400,
-          body: JSON.stringify({ error: "Missing id" }),
-        };
-      }
-      const all = (await store.get("list", { type: "json" })) || {};
-      all[body.id] = body;
-      await store.setJSON("list", all);
-      return { statusCode: 200, body: JSON.stringify({ ok: true, competition: body }) };
+      const list = (await store.get(clubId, { type: "json" })) || [];
+      if (!body.id) body.id = Date.now().toString();
+      list.push(body);
+      await store.setJSON(clubId, list);
+      return { statusCode: 200, body: JSON.stringify(list) };
+    }
+
+    if (event.httpMethod === "DELETE") {
+      const body = JSON.parse(event.body || "{}");
+      let list = (await store.get(clubId, { type: "json" })) || [];
+      list = list.filter((p) => p.id !== body.id);
+      await store.setJSON(clubId, list);
+      return { statusCode: 200, body: JSON.stringify(list) };
     }
 
     return { statusCode: 405, body: JSON.stringify({ error: "Method not allowed" }) };
   } catch (err) {
-    console.error("competitions error:", err);
-    return { statusCode: 500, body: JSON.stringify({ error: err.message }) };
+    console.error("participants error:", err);
+    return { statusCode: 500, body: JSON.stringify({ error: err.message, stack: err.stack }) };
   }
 }
