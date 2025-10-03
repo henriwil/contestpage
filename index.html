@@ -442,11 +442,20 @@ async function removePlayer(pid){
   render();
   openModal();  // 🔄 refresh modal list
 }
-function renamePlayer(pid){
-  const p=state.players.find(p=>p.id===pid); if(!p)return;
-  const n=prompt("New name:",p.name); if(!n)return;
-  p.name=n; saveParticipant(p);
-  openModal(); // 🔄 ensure modal list shows new name
+async function renamePlayer(pid){
+  const p = state.players.find(p=>p.id===pid); if(!p) return;
+  const n = prompt("New name:", p.name); if(!n) return;
+
+  // Remove old participant
+  await deleteParticipant(pid);
+
+  // Add new participant with same id
+  const updated = { id: pid, name: n };
+  state.players = state.players.map(x => x.id === pid ? updated : x);
+  await saveParticipant(updated);
+
+  render();
+  openModal(); // refresh modal
 }
 
 /* --- Scoring --- */
