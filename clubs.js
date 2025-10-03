@@ -6,7 +6,11 @@ window.clubs = [
   { name: "Linderud", id: "214" },
   { name: "Karlsrud", id: "216" },
   { name: "Lambertseter", id: "217" },
-  { name: "Metro", id: "149" }
+  { name: "Metro", id: "149" },
+  { name: "Akersgata", id: "166" },
+  { name: "Fornebu", id: "253" },
+  { name: "Sjølyst", id: "220" },
+  { name: "Sandvika Panorama", id: "222" }
   /*,
   { name: "Nesttun", id: "104" },
   { name: "Drammen", id: "106" },
@@ -28,7 +32,6 @@ window.clubs = [
   { name: "Kampen", id: "161" },
   { name: "Tasta", id: "162" },
   { name: "Vinderen", id: "163" },
-  { name: "Akersgata", id: "166" },
   { name: "Sandviken", id: "167" },
   { name: "Sandnes", id: "171" },
   { name: "Njårdhallen", id: "173" },
@@ -51,9 +54,9 @@ window.clubs = [
   { name: "Lambertseter", id: "217" },
   { name: "Ringnes Park", id: "218" },
   { name: "Ryen", id: "219" },
-  { name: "Sjølyst", id: "220" },
+  
   { name: "Ullevaal Stadion", id: "221" },
-  { name: "Sandvika Panorama", id: "222" },
+  
   { name: "Jessheim", id: "223" },
   { name: "Kolbotn", id: "224" },
   { name: "Tunejordet", id: "227" },
@@ -66,7 +69,7 @@ window.clubs = [
   { name: "Herbarium", id: "237" },
   { name: "Vågsbygd", id: "240" },
   { name: "Røa", id: "251" },
-  { name: "Fornebu", id: "253" },
+  
   { name: "Porsgrunn", id: "254" },
   { name: "Porselensfabrikken", id: "255" },
   { name: "Klosterøya", id: "256" },
