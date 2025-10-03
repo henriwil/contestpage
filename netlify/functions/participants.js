@@ -1,11 +1,11 @@
 import { getStore } from "@netlify/blobs";
 
 const store =
-  process.env.NETLIFY_SITE_ID && process.env.NETLIFY_BLOBS_TOKEN
+  process.env.NETLIFY_SITE_ID && process.env.NETLIFY_AUTH_TOKEN
     ? getStore({
         name: "participants",
         siteID: process.env.NETLIFY_SITE_ID,
-        token: process.env.NETLIFY_BLOBS_TOKEN,
+        token: process.env.NETLIFY_AUTH_TOKEN,
       })
     : getStore("participants");
 
