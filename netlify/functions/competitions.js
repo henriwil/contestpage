@@ -1,33 +1,50 @@
 import { getStore } from "@netlify/blobs";
 
-// Using your PAT (personal access token)
-const store = getStore({
-  name: "competitions",
-  siteID: process.env.NETLIFY_SITE_ID,      // from Netlify site settings
-  token: process.env.NETLIFY_AUTH_TOKEN,   // your Personal Access Token
-});
-
 export async function handler(event) {
   try {
+    const store = getStore("competitions");
+
     if (event.httpMethod === "GET") {
-      const all = (await store.get("list", { type: "json" })) || {};
-      return { statusCode: 200, body: JSON.stringify(all) };
+      // Defensive read: if JSON is corrupt, fall back to {}
+      let all = {};
+      try {
+        all = (await store.get("list", { type: "json" })) || {};
+      } catch (e) {
+        // Try raw read & log, then fallback
+        const raw = await store.get("list");
+        console.error("competitions GET: invalid JSON in 'list'", { raw });
+        all = {};
+      }
+      return json(200, all);
     }
 
     if (event.httpMethod === "POST") {
-      const body = JSON.parse(event.body || "{}");
-      if (!body.id) return { statusCode: 400, body: "Missing id" };
+      const body = safeParse(event.body);
+      if (!body?.id) return json(400, { error: "Missing id" });
 
-      const all = (await store.get("list", { type: "json" })) || {};
+      // Load current map defensively
+      let all = {};
+      try {
+        all = (await store.get("list", { type: "json" })) || {};
+      } catch {
+        all = {};
+      }
+
       all[body.id] = body;
       await store.setJSON("list", all);
-
-      return { statusCode: 200, body: JSON.stringify({ ok: true, competition: body }) };
+      return json(200, { ok: true, competition: body });
     }
 
-    return { statusCode: 405, body: "Method not allowed" };
+    return json(405, { error: "Method not allowed" });
   } catch (err) {
     console.error("competitions error:", err);
-    return { statusCode: 500, body: "Server error: " + err.message };
+    return json(500, { error: err.message });
   }
+}
+
+function safeParse(s) {
+  try { return JSON.parse(s || "{}"); } catch { return null; }
+}
+function json(statusCode, body) {
+  return { statusCode, headers: { "Content-Type": "application/json" }, body: JSON.stringify(body) };
 }
