@@ -137,9 +137,10 @@ function fmtShort(dateStr){
 async function loadClubs(){
   const sel=document.getElementById("clubSelect");
   sel.innerHTML="";
-  clubs.forEach(cl=>{
+  (window.clubs || []).forEach(cl=>{
     const opt=document.createElement("option");
-    opt.value=cl.id; opt.textContent=cl.name;
+    opt.value=cl.id; 
+    opt.textContent=cl.name;
     sel.appendChild(opt);
   });
   sel.onchange=e=>{
@@ -149,7 +150,7 @@ async function loadClubs(){
     loadParticipants();
   };
   const savedClub=localStorage.getItem("activeClub");
-  state.activeClub=savedClub||clubs[0].id;
+  state.activeClub=savedClub || (window.clubs && window.clubs[0]?.id);
   sel.value=state.activeClub;
   loadCompetitions();
   loadParticipants();
