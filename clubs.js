@@ -5,7 +5,8 @@ window.clubs = [
   { name: "Kalbakken", id: "213" },
   { name: "Linderud", id: "214" },
   { name: "Karlsrud", id: "216" },
-  { name: "Lambertseter", id: "217" }
+  { name: "Lambertseter", id: "217" },
+  { name: "Metro", id: "149" }
   /*,
   { name: "Nesttun", id: "104" },
   { name: "Drammen", id: "106" },
@@ -19,7 +20,6 @@ window.clubs = [
   { name: "Lillestrøm", id: "146" },
   { name: "Solli Plass", id: "147" },
   { name: "Schous plass", id: "148" },
-  { name: "Metro", id: "149" },
   { name: "Bekkestua", id: "152" },
   { name: "Langnes", id: "154" },
   { name: "Bislett", id: "156" },
