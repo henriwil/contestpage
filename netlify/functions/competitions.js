@@ -1,10 +1,16 @@
-// netlify/functions/competitions.js
 import { getStore } from "@netlify/blobs";
-
-const store = getStore({ name: "competitions" }); 
 
 export async function handler(event) {
   try {
+    console.log("SITE_ID:", process.env.NETLIFY_SITE_ID ? "exists" : "missing");
+    console.log("BLOBS_TOKEN:", process.env.NETLIFY_BLOBS_TOKEN ? "exists" : "missing");
+
+    const store = getStore({
+      name: "competitions", // store name
+      siteID: process.env.NETLIFY_SITE_ID,
+      token: process.env.NETLIFY_BLOBS_TOKEN,
+    });
+
     if (event.httpMethod === "GET") {
       const all = (await store.get("list", { type: "json" })) || {};
       return { statusCode: 200, body: JSON.stringify(all) };
