@@ -38,6 +38,37 @@
   .competition.active{background:var(--sats-primary); color:#fff; border-color:var(--sats-primary);}
   .competition.finished{background:#f0f0f0; color:#888; border:1px solid #ddd; font-style:italic;}
 
+  .feedback-fab{
+  position: fixed;
+  right: 18px;
+  bottom: 18px;
+  z-index: 1000;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 14px;
+  border-radius: 999px;
+  background: var(--sats-primary);
+  color: #fff;
+  font-weight: 700;
+  text-decoration: none;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.12);
+  transition: transform .06s ease, box-shadow .2s ease, filter .15s ease;
+}
+.feedback-fab:hover{
+  filter: brightness(0.95);
+  transform: translateY(-1px);
+  box-shadow: 0 10px 24px rgba(0,0,0,0.16);
+}
+.feedback-fab:focus-visible{
+  outline: 3px solid #ccefff; /* accessible focus ring */
+  outline-offset: 3px;
+  box-shadow: 0 0 0 2px var(--sats-dark);
+}
+@media (max-width: 640px) {
+  .feedback-fab { right: 12px; bottom: 12px; padding: 9px 12px; }
+}
+
   #main{padding:20px; overflow:auto; display:flex; flex-direction:column; gap:14px;}
   .row{display:flex; align-items:center; gap:10px; flex-wrap:wrap;}
   .spacer{flex:1;}
@@ -390,5 +421,15 @@ document.getElementById("range7").onclick=()=>{chartRange="7"; buildChart();};
 /* --- Start --- */
 window.onload = () => { loadClubs(); };
 </script>
+  <a
+  class="feedback-fab"
+  href="https://forms.office.com/e/iHzrELFreB"
+  target="_blank"
+  rel="noopener noreferrer"
+  aria-label="Give feedback (opens in new tab)"
+  title="Give feedback"
+>
+  💬 Feedback
+</a>
 </body>
 </html>
