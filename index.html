@@ -563,7 +563,10 @@ function endNow(){const c=active(); c.ended=true; c.end=new Date().toISOString()
 
 /* --- Events --- */
 document.getElementById("btnNewComp").onclick=newComp;
-document.getElementById("btnManage").onclick=openModal;
+document.getElementById("btnManage").onclick = () => {
+  document.getElementById("sidebar").classList.remove("open"); // collapse sidebar
+  openModal();
+};
 
 /* Desktop actions */
 document.getElementById("btnDraw").onclick=drawWinner;
@@ -572,6 +575,13 @@ document.getElementById("btnEnd").onclick=endNow;
 /* Mobile actions */
 document.getElementById("btnDrawMobile").onclick=drawWinner;
 document.getElementById("btnEndMobile").onclick=endNow;
+
+  /* Add Button actions */
+  document.getElementById("btnAddPart").onclick=()=>{   // ← this one
+  const v=document.getElementById("newPart").value.trim();
+  if(v) addPlayer(v);
+  document.getElementById("newPart").value="";
+};
 
 /* Range buttons (you can add logic if you filter events by range later) */
 document.getElementById("rangeAll").onclick=()=>{ chartRange="all"; buildChart(); };
