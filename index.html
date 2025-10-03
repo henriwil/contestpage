@@ -247,33 +247,70 @@ tbody tr:nth-child(odd) { background: #fafafa; }
 }
 #compActions { display: flex; gap: 10px; }
 
-/* --- Mobile sidebar overlay --- */
+/* --- Mobile sidebar collapsed flap --- */
 @media(max-width: 900px) {
   #sidebar {
     position: fixed;
     top: 0;
     left: 0;
     right: 0;
-    height: 40px; /* collapsed */
-    background: var(--sats-primary);
-    color: #fff;
-    border-bottom: 2px solid var(--sats-border);
+    height: 50px; /* collapsed */
+    background: #fff;
+    color: var(--sats-text);
+    border-bottom-left-radius: 14px;
+    border-bottom-right-radius: 14px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.15);
     overflow: hidden;
     transition: height 0.3s ease;
     z-index: 1000;
   }
-  #sidebar.open { height: 70vh; }
+  #sidebar.open {
+    height: 70vh; /* expanded */
+    border-radius: 0;
+  }
+
+  /* flap text */
   #sidebar::before {
-    content: "Change competition";
+    content: "⬇ Change competition ⬇";
     display: flex;
     align-items: center;
     justify-content: center;
-    height: 40px;
+    height: 50px;
     font-weight: 700;
-    color: #fff;
+    font-size: 0.95rem;
     cursor: pointer;
-    background: var(--sats-primary);
+    color: var(--sats-primary);
   }
+
+  /* hide inner content when collapsed */
+  #sidebar:not(.open) > *:not(h2):not(select) {
+    display: none;
+  }
+  #sidebar:not(.open) h2 {
+    display: none;
+  }
+}
+
+  /* --- Mobile actions layout --- */
+@media(max-width: 900px) {
+  .row.dates #mobileActions {
+    display: flex;
+    gap: 8px;
+    width: 100%;
+  }
+  .row.dates #mobileActions button {
+    flex: 1;
+    font-size: 0.9rem;
+    padding: 10px;
+  }
+}
+  
+  /* --- Graph stacks below on mobile --- */
+@media(max-width: 900px) {
+  .grid-2 {
+    grid-template-columns: 1fr; /* stack vertically */
+  }
+}
 
   .row.header-row {
     flex-direction: column;
@@ -474,9 +511,9 @@ document.getElementById("rangeAll").onclick=()=>{chartRange="all"; buildChart();
 document.getElementById("range30").onclick=()=>{chartRange="30"; buildChart();};
 document.getElementById("range7").onclick=()=>{chartRange="7"; buildChart();};
 
-/* --- Sidebar toggle strip --- */
+// Toggle sidebar open/close
 document.getElementById("sidebar").addEventListener("click", function(e) {
-  if (this.offsetHeight <= 50 || e.target === this) {
+  if (this.offsetHeight <= 60 || e.target === this) {
     this.classList.toggle("open");
   }
 });
