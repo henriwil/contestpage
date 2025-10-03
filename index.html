@@ -10,7 +10,8 @@
 <!-- Confetti -->
 <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.2/dist/confetti.browser.min.js"></script>
 <!-- Clubs data -->
-<script src="clubs.js"></script>
+  <script src="clubs.js" defer></script>
+<script src="main.js" defer></script>
 
 <style>
   :root{
@@ -378,3 +379,21 @@ document.getElementById("btnManage").onclick=openModal;
 document.getElementById("btnDraw").onclick=drawWinner;
 document.getElementById("btnEnd").onclick=endNow;
 document.getElementById("btnAddPart").onclick=()=>{const v=document.getElementById("newPart").value.trim(); if(v) addPlayer(v); document.getElementById("newPart").value="";
+document.getElementById("btnAddPart").onclick = () => {
+  const v = document.getElementById("newPart").value.trim();
+  if (v) addPlayer(v);
+  document.getElementById("newPart").value = "";
+};
+
+// --- Chart range buttons ---
+document.getElementById("rangeAll").onclick = () => { chartRange = "all"; buildChart(); };
+document.getElementById("range30").onclick = () => { chartRange = "30"; buildChart(); };
+document.getElementById("range7").onclick = () => { chartRange = "7"; buildChart(); };
+
+// --- Start ---
+window.onload = () => {
+  loadClubs();
+};
+</script>
+</body>
+</html>
