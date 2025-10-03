@@ -134,26 +134,43 @@ function fmtShort(dateStr){
 }
 
 /* --- Backend calls --- */
-async function loadClubs(){
-  const sel=document.getElementById("clubSelect");
-  sel.innerHTML="";
-  (window.clubs || []).forEach(cl=>{
-    const opt=document.createElement("option");
-    opt.value=cl.id; 
-    opt.textContent=cl.name;
+async function loadClubs() {
+  const sel = document.getElementById("clubSelect");
+  sel.innerHTML = "";
+
+  if (!window.clubs || window.clubs.length === 0) {
+    console.error("No clubs found in window.clubs");
+    return;
+  }
+
+  window.clubs.forEach(cl => {
+    const opt = document.createElement("option");
+    opt.value = cl.id;
+    opt.textContent = cl.name;
     sel.appendChild(opt);
   });
-  sel.onchange=e=>{
-    state.activeClub=e.target.value;
+
+  sel.onchange = e => {
+    state.activeClub = e.target.value;
     localStorage.setItem("activeClub", state.activeClub);
-    loadCompetitions();
-    loadParticipants();
+    try {
+      loadCompetitions();
+      loadParticipants();
+    } catch (err) {
+      console.error("Error loading competitions/participants:", err);
+    }
   };
-  const savedClub=localStorage.getItem("activeClub");
-  state.activeClub=savedClub || (window.clubs && window.clubs[0]?.id);
-  sel.value=state.activeClub;
-  loadCompetitions();
-  loadParticipants();
+
+  const savedClub = localStorage.getItem("activeClub");
+  state.activeClub = savedClub || window.clubs[0].id;
+  sel.value = state.activeClub;
+
+  try {
+    await loadCompetitions();
+    await loadParticipants();
+  } catch (err) {
+    console.error("Error on initial load:", err);
+  }
 }
 
 async function loadCompetitions(){
