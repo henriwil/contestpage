@@ -2,11 +2,11 @@ import { getStore } from "@netlify/blobs";
 
 // Either use injected env (prod) or manual fallback
 const store =
-  process.env.NETLIFY_SITE_ID && process.env.NETLIFY_BLOBS_TOKEN
+  process.env.NETLIFY_SITE_ID && process.env.NETLIFY_AUTH_TOKEN
     ? getStore({
         name: "competitions",
         siteID: process.env.NETLIFY_SITE_ID,
-        token: process.env.NETLIFY_BLOBS_TOKEN,
+        token: process.env.NETLIFY_AUTH_TOKEN,
       })
     : getStore("competitions");
 
