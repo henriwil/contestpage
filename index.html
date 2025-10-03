@@ -21,7 +21,6 @@
   --radius: 10px;
 }
 
-/* --- Globalt --- */
 html, body {
   height: 100%;
   margin: 0;
@@ -91,7 +90,6 @@ body {
   flex-direction: column;
   gap: 14px;
 }
-
 #sidebar h2 { color: #fff; }
 
 /* competitions wrapper scrollable */
@@ -171,10 +169,7 @@ body {
 }
 
 /* --- Tabeller --- */
-table {
-  width: 100%;
-  border-collapse: collapse;
-}
+table { width: 100%; border-collapse: collapse; }
 thead th {
   padding: 12px 8px;
   font-weight: 700;
@@ -187,9 +182,7 @@ tbody td {
   padding: 12px 8px;
   border-bottom: 1px solid var(--sats-border);
 }
-tbody tr:nth-child(odd) {
-  background: #fafafa;
-}
+tbody tr:nth-child(odd) { background: #fafafa; }
 
 /* --- Modal --- */
 #modal {
@@ -206,8 +199,6 @@ tbody tr:nth-child(odd) {
   padding: 24px;
   width: min(520px, 92vw);
 }
-
-/* --- Små elementer --- */
 .participantRow {
   display: flex;
   justify-content: space-between;
@@ -238,66 +229,73 @@ tbody tr:nth-child(odd) {
   transform: translateY(-2px);
 }
 
-/* --- Graf og leaderboard side-ved-side --- */
+/* --- Leaderboard & Graph split evenly --- */
 .grid-2 {
   display: grid;
   gap: 20px;
   grid-template-columns: 1fr 1fr;
+  align-items: stretch;
 }
-@media(max-width: 1000px) {
-  .grid-2 {
-    grid-template-columns: 1fr;
-  }
-}
+.grid-2 > .card { height: 100%; }
 
-/* --- Header med actions til høyre --- */
+/* --- Header with actions --- */
 .row.header-row {
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 12px;
 }
-#compActions {
-  display: flex;
-  gap: 10px;
-}
+#compActions { display: flex; gap: 10px; }
 
 /* --- Mobile sidebar overlay --- */
 @media(max-width: 900px) {
   #sidebar {
     position: fixed;
-    top: -100%;
+    top: 0;
     left: 0;
     right: 0;
-    background: #fff;
-    color: var(--sats-text);
-    height: 70vh;
-    border-bottom: 2px solid var(--sats-border);
-    box-shadow: 0 6px 16px rgba(0,0,0,0.15);
-    transition: top 0.3s ease;
-    z-index: 1000;
-  }
-  #sidebar.open {
-    top: 0;
-  }
-
-  #sidebarToggle {
-    display: block;
-    position: fixed;
-    top: 10px;
-    right: 10px;
+    height: 40px; /* collapsed */
     background: var(--sats-primary);
     color: #fff;
-    border-radius: var(--radius);
-    padding: 10px 14px;
+    border-bottom: 2px solid var(--sats-border);
+    overflow: hidden;
+    transition: height 0.3s ease;
+    z-index: 1000;
+  }
+  #sidebar.open { height: 70vh; }
+  #sidebar::before {
+    content: "Change competition";
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 40px;
     font-weight: 700;
-    z-index: 1100;
+    color: #fff;
+    cursor: pointer;
+    background: var(--sats-primary);
+  }
+
+  .row.header-row {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 6px;
+  }
+  #compActions { display: none; }
+
+  .row.dates {
+    flex-wrap: wrap;
+    gap: 10px;
+    width: 100%;
+    justify-content: space-between;
+  }
+  .row.dates #mobileActions {
+    display: flex;
+    gap: 8px;
+    margin-left: auto;
   }
 }
 @media(min-width: 901px) {
-  #sidebarToggle {
-    display: none;
-  }
+  .row.dates #mobileActions { display: none; }
 }
 </style>
 </head>
@@ -317,20 +315,21 @@ tbody tr:nth-child(odd) {
   <button class="btn ghost" id="btnManage">Manage participants</button>
 </aside>
 
-<!-- Mobile toggle -->
-<button id="sidebarToggle">Change competition</button>
-
 <main id="main">
   <div class="row header-row">
     <h1 id="compName">No competition</h1>
     <div id="compActions">
       <button class="btn ghost" id="btnEnd">End now</button>
-      <button class="btn primary" id="btnDraw">🎉 Draw winner</button>
+      <button class="btn ghost" id="btnDraw">🎉 Draw winner</button>
     </div>
   </div>
   <div class="row dates">
     📅 <input type="date" id="startDate"> <input type="date" id="endDate">
     <span class="muted" id="rangeInfo"></span>
+    <div id="mobileActions">
+      <button class="btn ghost" id="btnEndMobile">End now</button>
+      <button class="btn ghost" id="btnDrawMobile">🎉 Draw winner</button>
+    </div>
   </div>
 
   <section class="grid-2">
@@ -366,20 +365,9 @@ tbody tr:nth-child(odd) {
   </div>
 </div>
 
-<!-- Feedback-knapp -->
-<a
-  class="feedback-fab"
-  href="https://forms.office.com/e/iHzrELFreB"
-  target="_blank"
-  rel="noopener noreferrer"
-  aria-label="Give feedback (opens in new tab)"
-  title="Give feedback"
->
-  💬 Feedback
-</a>
+<a class="feedback-fab" href="https://forms.office.com/e/iHzrELFreB" target="_blank" rel="noopener noreferrer">💬 Feedback</a>
 
 <script>
-/* --- App State --- */
 let state={competitions:{},players:[],active:null,activeClub:""};
 let chart, chartRange="all";
 
@@ -391,7 +379,6 @@ function fmtShort(dateStr){
   return `${dd}/${mm}/${yy}`;
 }
 
-/* --- Backend calls --- */
 async function loadClubs(){
   const sel=document.getElementById("clubSelect");
   sel.innerHTML="";
@@ -403,14 +390,12 @@ async function loadClubs(){
   sel.onchange=e=>{
     state.activeClub=e.target.value;
     localStorage.setItem("activeClub", state.activeClub);
-    loadCompetitions();
-    loadParticipants();
+    loadCompetitions(); loadParticipants();
   };
   const savedClub=localStorage.getItem("activeClub");
   state.activeClub=savedClub||clubs[0].id;
   sel.value=state.activeClub;
-  loadCompetitions();
-  loadParticipants();
+  loadCompetitions(); loadParticipants();
 }
 
 async function loadCompetitions(){
@@ -425,9 +410,7 @@ async function loadCompetitions(){
   render();
 }
 async function saveCompetition(comp){
-  await fetch("/.netlify/functions/competitions",{
-    method:"POST", headers:{"Content-Type":"application/json"}, body:JSON.stringify(comp)
-  });
+  await fetch("/.netlify/functions/competitions",{method:"POST", headers:{"Content-Type":"application/json"}, body:JSON.stringify(comp)});
   await loadCompetitions();
 }
 
@@ -439,162 +422,43 @@ async function loadParticipants(){
   render();
 }
 async function saveParticipant(player){
-  await fetch(`/.netlify/functions/participants?clubId=${state.activeClub}`,{
-    method:"POST", headers:{"Content-Type":"application/json"}, body:JSON.stringify(player)
-  });
+  await fetch(`/.netlify/functions/participants?clubId=${state.activeClub}`,{method:"POST", headers:{"Content-Type":"application/json"}, body:JSON.stringify(player)});
   await loadParticipants();
 }
 async function deleteParticipant(id){
-  await fetch(`/.netlify/functions/participants?clubId=${state.activeClub}`,{
-    method:"DELETE", headers:{"Content-Type":"application/json"}, body:JSON.stringify({id})
-  });
+  await fetch(`/.netlify/functions/participants?clubId=${state.activeClub}`,{method:"DELETE", headers:{"Content-Type":"application/json"}, body:JSON.stringify({id})});
   await loadParticipants();
 }
 
-/* --- Competitions --- */
 function newComp(){
   const name=prompt("Competition name"); if(!name)return;
   const id=Date.now().toString();
   const now=new Date();
-  state.competitions[id]={
-    id,name,clubId:state.activeClub,
-    start:now.toISOString().slice(0,10),
-    end:new Date(now.getTime()+30*86400000).toISOString().slice(0,10),
-    scores:{}, events:[], ended:false};
+  state.competitions[id]={id,name,clubId:state.activeClub,start:now.toISOString().slice(0,10),end:new Date(now.getTime()+30*86400000).toISOString().slice(0,10),scores:{}, events:[], ended:false};
   state.active=id; localStorage.setItem("activeComp",id);
   saveCompetition(state.competitions[id]);
 }
 function switchComp(id){state.active=id; localStorage.setItem("activeComp",id); render();}
 const active=()=>state.competitions[state.active];
 
-/* --- Players --- */
-function addPlayer(name){
-  const id=Math.random().toString(36).slice(2);
-  const player={id,name};
-  state.players.push(player);
-  saveParticipant(player);
-}
-async function removePlayer(pid){
-  state.players=state.players.filter(p=>p.id!==pid);
-  await deleteParticipant(pid);
-  for(const c of Object.values(state.competitions)){ delete c.scores[pid]; }
-  render();
-}
-function renamePlayer(pid){
-  const p=state.players.find(p=>p.id===pid); if(!p)return;
-  const n=prompt("New name:",p.name); if(!n)return;
-  p.name=n; saveParticipant(p);
-}
+function addPlayer(name){const id=Math.random().toString(36).slice(2); const player={id,name}; state.players.push(player); saveParticipant(player);}
+async function removePlayer(pid){state.players=state.players.filter(p=>p.id!==pid); await deleteParticipant(pid); for(const c of Object.values(state.competitions)){ delete c.scores[pid]; } render();}
+function renamePlayer(pid){const p=state.players.find(p=>p.id===pid); if(!p)return; const n=prompt("New name:",p.name); if(!n)return; p.name=n; saveParticipant(p);}
 
-/* --- Scoring --- */
-async function inc(pid){
-  const c = active();
-  if(!c) return;
-  c.scores[pid] = (c.scores[pid] || 0) + 1;
-  c.events.push({ pid, time: Date.now(), delta: +1 });
-  await saveCompetition(c);
-  render();
-}
+async function inc(pid){const c=active(); if(!c)return; c.scores[pid]=(c.scores[pid]||0)+1; c.events.push({ pid, time: Date.now(), delta:+1 }); await saveCompetition(c); render();}
+async function dec(pid){const c=active(); if(!c)return; c.scores[pid]=Math.max(0,(c.scores[pid]||0)-1); c.events.push({ pid, time: Date.now(), delta:-1 }); await saveCompetition(c); render();}
 
-async function dec(pid){
-  const c = active();
-  if(!c) return;
-  c.scores[pid] = Math.max(0, (c.scores[pid]||0) - 1);
-  c.events.push({ pid, time: Date.now(), delta: -1 });
-  await saveCompetition(c);
-  render();
-}
-/* --- Chart --- */
 const BRAND_COLORS=["#009fdb","#002b45","#56c271","#f4a261","#e76f51"];
 function colorFor(pid,idx){if(idx<BRAND_COLORS.length)return BRAND_COLORS[idx]; let h=0; for(let i=0;i<pid.length;i++)h=(h*31+pid.charCodeAt(i))%360; return `hsl(${h} 55% 60%)`;}
-function buildDateLabels(c) {
-  const arr = [];
-  let start = new Date(c.start + "T00:00:00");
-  let end = new Date(); // always go until today
-  const compEnd = new Date(c.end + "T23:59:59");
-  if (compEnd > end) end = compEnd;
+function buildDateLabels(c){const arr=[]; let start=new Date(c.start+"T00:00:00"); let end=new Date(); const compEnd=new Date(c.end+"T23:59:59"); if(compEnd>end) end=compEnd; for(let dt=new Date(start); dt<=end; dt.setDate(dt.getDate()+1)){ arr.push(dt.toISOString().slice(0,10)); } return arr;}
+function buildChart(){const c=active(); if(!c)return; const ctx=document.getElementById("chart").getContext("2d"); const labels=buildDateLabels(c); const datasets=state.players.map((p,idx)=>{let score=0; const data=labels.map(d=>{const dayEnd=new Date(d+"T23:59:59").getTime(); score=c.events.filter(ev=>ev.pid===p.id&&ev.time<=dayEnd).reduce((acc,ev)=> acc+(ev.delta||1),0); return score;}); return {label:p.name,data,borderColor:colorFor(p.id,idx),borderWidth:2,tension:.25,pointRadius:0};}); const maxScore=Math.max(1,...datasets.flatMap(ds=>ds.data)); if(chart) chart.destroy(); chart=new Chart(ctx,{type:"line",data:{labels:labels.map(fmtShort),datasets},options:{maintainAspectRatio:false,scales:{x:{ticks:{maxTicksLimit:8}},y:{beginAtZero:true,suggestedMax:maxScore+2}}}});}
 
-  for (let dt = new Date(start); dt <= end; dt.setDate(dt.getDate() + 1)) {
-    arr.push(dt.toISOString().slice(0, 10));
-  }
-  return arr;
-}
+function renderCompetitions(){const list=document.getElementById("competitions"); list.innerHTML=""; Object.values(state.competitions).sort((a,b)=>Number(b.id)-Number(a.id)).forEach(c=>{const div=document.createElement("div"); div.className="competition"+(c.id===state.active?" active":"")+(c.ended?" finished":""); div.textContent=`${c.name} ${fmtShort(c.start)}–${fmtShort(c.end)}${c.ended?" (Finished)":""}`; div.onclick=()=>switchComp(c.id); list.appendChild(div);});}
+function render(){renderCompetitions(); const c=active(); if(!c)return; document.getElementById("compName").textContent=c.name+(c.ended?" (Finished)":""); document.getElementById("startDate").value=c.start; document.getElementById("endDate").value=c.end; document.getElementById("startDate").onchange=e=>{c.start=e.target.value; saveCompetition(c);}; document.getElementById("endDate").onchange=e=>{c.end=e.target.value; saveCompetition(c);}; const tbody=document.getElementById("leaderboard"); tbody.innerHTML=""; state.players.map(p=>({id:p.id,name:p.name,score:c.scores[p.id]||0})).sort((a,b)=>b.score-a.score).forEach((p,i)=>{const tr=document.createElement("tr"); tr.innerHTML=`<td>${i+1}</td><td>${p.name}</td><td><b>${p.score}</b></td><td class="scoreBtns"><button class="btn primary" onclick="inc('${p.id}')">+1</button><button class="btn ghost small" onclick="dec('${p.id}')">-1</button></td>`; tbody.appendChild(tr);}); buildChart();}
 
-function buildChart(){
-  const c = active();
-  if(!c) return;
-  const ctx = document.getElementById("chart").getContext("2d");
-
-  const labels = buildDateLabels(c);
-
-  const datasets = state.players.map((p,idx)=>{
-    let score = 0;
-    const data = labels.map(d=>{
-      const dayEnd = new Date(d+"T23:59:59").getTime();
-      score = c.events
-        .filter(ev => ev.pid === p.id && ev.time <= dayEnd)
-        .reduce((acc,ev)=> acc + (ev.delta || 1), 0);
-      return score;
-    });
-    return {
-      label: p.name,
-      data,
-      borderColor: colorFor(p.id, idx),
-      borderWidth: 2,
-      tension: .25,
-      pointRadius: 0
-    };
-  });
-
-  const maxScore = Math.max(1,...datasets.flatMap(ds=>ds.data));
-  if(chart) chart.destroy();
-  chart = new Chart(ctx,{
-    type:"line",
-    data:{ labels:labels.map(fmtShort), datasets },
-    options:{ maintainAspectRatio:false,
-      scales:{
-        x:{ ticks:{ maxTicksLimit:8 }},
-        y:{ beginAtZero:true, suggestedMax:maxScore+2 }
-      }
-    }
-  });
-}
-
-/* --- Render --- */
-function renderCompetitions(){
-  const list=document.getElementById("competitions"); list.innerHTML="";
-  Object.values(state.competitions)
-    .sort((a,b)=>Number(b.id)-Number(a.id))
-    .forEach(c=>{
-      const div=document.createElement("div");
-      div.className="competition"+(c.id===state.active?" active":"")+(c.ended?" finished":"");
-      div.textContent=`${c.name} ${fmtShort(c.start)}–${fmtShort(c.end)}${c.ended?" (Finished)":""}`;
-      div.onclick=()=>switchComp(c.id);
-      list.appendChild(div);
-    });
-}
-function render(){
-  renderCompetitions();
-  const c=active(); if(!c)return;
-  document.getElementById("compName").textContent=c.name+(c.ended?" (Finished)":"");
-  document.getElementById("startDate").value=c.start; document.getElementById("endDate").value=c.end;
-  document.getElementById("startDate").onchange=e=>{c.start=e.target.value; saveCompetition(c);};
-  document.getElementById("endDate").onchange=e=>{c.end=e.target.value; saveCompetition(c);};
-  const tbody=document.getElementById("leaderboard"); tbody.innerHTML="";
-  state.players.map(p=>({id:p.id,name:p.name,score:c.scores[p.id]||0}))
-    .sort((a,b)=>b.score-a.score).forEach((p,i)=>{const tr=document.createElement("tr");
-      tr.innerHTML=`<td>${i+1}</td><td>${p.name}</td><td><b>${p.score}</b></td>
-      <td class="scoreBtns"><button class="btn primary" onclick="inc('${p.id}')">+1</button>
-      <button class="btn ghost small" onclick="dec('${p.id}')">-1</button></td>`;
-      tbody.appendChild(tr);});
-  buildChart();
-}
-
-/* --- Modal --- */
 function openModal(){const pl=document.getElementById("partList"); pl.innerHTML=""; state.players.forEach(p=>{const row=document.createElement("div"); row.className="participantRow"; row.innerHTML=`<div>${p.name}</div><div class="row"><button class="btn ghost small" onclick="renamePlayer('${p.id}')">Rename</button><button class="btn ghost small" onclick="removePlayer('${p.id}')">Remove</button></div>`; pl.appendChild(row);}); document.getElementById("modal").style.display="flex";}
 function closeModal(){document.getElementById("modal").style.display="none";}
 
-/* --- Winner/End --- */
 function drawWinner(){const c=active(); const entries=[]; for(const [pid,score] of Object.entries(c.scores)){for(let i=0;i<score;i++)entries.push(state.players.find(p=>p.id===pid)?.name);} if(!entries.length){alert("No points");return;} alert("Winner: "+entries[Math.floor(Math.random()*entries.length)]);}
 function endNow(){const c=active(); c.ended=true; c.end=new Date().toISOString().slice(0,10); saveCompetition(c);}
 
@@ -603,19 +467,22 @@ document.getElementById("btnNewComp").onclick=newComp;
 document.getElementById("btnManage").onclick=openModal;
 document.getElementById("btnDraw").onclick=drawWinner;
 document.getElementById("btnEnd").onclick=endNow;
+document.getElementById("btnDrawMobile").onclick=drawWinner;
+document.getElementById("btnEndMobile").onclick=endNow;
 document.getElementById("btnAddPart").onclick=()=>{const v=document.getElementById("newPart").value.trim(); if(v) addPlayer(v); document.getElementById("newPart").value="";};
 document.getElementById("rangeAll").onclick=()=>{chartRange="all"; buildChart();};
 document.getElementById("range30").onclick=()=>{chartRange="30"; buildChart();};
 document.getElementById("range7").onclick=()=>{chartRange="7"; buildChart();};
 
-/* --- Sidebar toggle for mobile --- */
-document.getElementById("sidebarToggle").onclick = () => {
-  document.getElementById("sidebar").classList.toggle("open");
-};
+/* --- Sidebar toggle strip --- */
+document.getElementById("sidebar").addEventListener("click", function(e) {
+  if (this.offsetHeight <= 50 || e.target === this) {
+    this.classList.toggle("open");
+  }
+});
 
 /* --- Start --- */
 window.onload = () => { loadClubs(); };
 </script>
-
 </body>
 </html>
