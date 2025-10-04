@@ -7,116 +7,330 @@
 
 <!-- Chart.js -->
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"></script>
-<!-- Clubs data -->
+<!-- Clubs data (you already have this file) -->
 <script src="clubs.js"></script>
 
 <style>
-  :root{
-    --sats-primary:#009fdb;
-    --sats-dark:#002b45;
-    --bg:#ffffff;
-    --bg-soft:#f5f7fa;
-    --border:#e3e8ef;
-    --text:#222;
-    --muted:#667085;
-  }
-  html,body{height:100%; margin:0; font-family:"Helvetica Neue",Arial,sans-serif; background:var(--bg); color:var(--text);}
-  body{display:grid; grid-template-columns:340px 1fr; height:100vh;}
-  h1,h2,h3{margin:0; font-weight:700; color:var(--sats-dark);}
-  h1{font-size:22px;} h2{font-size:18px;} h3{font-size:18px;}
-  html{font-size:18px;}
+:root {
+  --sats-primary: #002b45;   /* Mørk SATS-blå */
+  --sats-accent: #f15a29;    /* Oransje CTA */
+  --sats-light: #f7f7f7;     /* Lys seksjonsbakgrunn */
+  --sats-border: #e6e6e6;    /* Grå kantlinjer */
+  --sats-text: #0a1c2b;      /* Dyp blåsvart tekst */
+  --sats-muted: #667085;     /* Sekundær tekst */
+  --radius: 10px;
+}
 
-  .btn{cursor:pointer; border:none; border-radius:24px; padding:10px 18px; background:var(--sats-primary); color:#fff; font-weight:700;}
-  .btn:hover{filter:brightness(0.95);}
-  .btn.ghost{background:transparent; color:var(--sats-dark); border:1px solid var(--border);}
-  .btn.small{padding:8px 12px; border-radius:20px; font-size:0.9rem;}
-  input[type=date]{padding:4px 6px; font-size:0.9rem; border:1px solid #c9d2de; border-radius:6px;}
+html, body {
+  height: 100%;
+  margin: 0;
+  font-family: "Inter", "Helvetica Neue", Arial, sans-serif;
+  background: var(--sats-light);
+  color: var(--sats-text);
+  line-height: 1.4;
+}
 
-  #sidebar{background:var(--bg-soft); border-right:1px solid var(--border); padding:16px; display:flex; flex-direction:column; gap:12px;}
-  #competitions{flex:1; overflow:auto;}
-  .competition{padding:10px 12px; margin:6px 0; border:1px solid var(--border); border-radius:12px; background:#fff; cursor:pointer;}
-  .competition.active{background:var(--sats-primary); color:#fff; border-color:var(--sats-primary);}
-  .competition.finished{background:#f0f0f0; color:#888; border:1px solid #ddd; font-style:italic;}
+/* Headings */
+h1, h2, h3 { margin: 0; font-weight: 700; color: var(--sats-primary); }
+h1 { font-size: 2rem; }
+h2 { font-size: 1.4rem; }
+h3 { font-size: 1.2rem; }
 
-  .feedback-fab{
-  position: fixed;
-  right: 18px;
-  bottom: 18px;
-  z-index: 1000;
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  padding: 10px 14px;
-  border-radius: 999px;
+/* Buttons */
+.btn {
+  cursor: pointer;
+  border: none;
+  border-radius: var(--radius);
+  padding: 12px 22px;
+  font-weight: 700;
+  font-size: 1rem;
+  transition: background .2s, box-shadow .2s, color .2s, border-color .2s;
+}
+.btn.primary { background: var(--sats-accent); color: #fff; }
+.btn.primary:hover { background: #d94d1f; }
+.btn.ghost {
+  background: transparent;
+  color: var(--sats-primary);
+  border: 2px solid var(--sats-primary);
+}
+.btn.ghost:hover { background: var(--sats-primary); color: #fff; }
+.btn.small { padding: 8px 14px; font-size: 0.9rem; }
+
+/* Layout */
+body { display: grid; grid-template-columns: 320px 1fr; height: 100vh; }
+@media(max-width: 900px) { body { grid-template-columns: 1fr; } }
+
+/* Sidebar (desktop baseline) */
+#sidebar {
   background: var(--sats-primary);
   color: #fff;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+#sidebar h2 { color: #fff; }
+
+/* Inner wrapper to hide on mobile collapse */
+#sidebarInner { display: contents; }
+
+/* Competitions: scrollable area with New button pinned above list */
+#compWrap {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  overflow-y: auto;
+  min-height: 0;
+}
+#competitions {
+  flex: 1;
+  overflow-y: auto;
+}
+.competition {
+  background: #fff;
+  color: var(--sats-text);
+  border: 1px solid var(--sats-border);
+  border-radius: var(--radius);
+  padding: 10px 12px;
+  cursor: pointer;
+}
+.competition.active { background: var(--sats-accent); color: #fff; border: none; }
+.competition.finished { background: var(--sats-light); color: var(--sats-muted); font-style: italic; }
+
+/* New competition: white */
+#btnNewComp {
+  background: #fff;
+  color: var(--sats-primary);
+  border: 2px solid var(--sats-border);
+}
+#btnNewComp:hover { background: var(--sats-light); }
+
+/* Manage participants always visible style */
+#btnManage {
+  border: 2px solid #fff;
+  color: #fff;
+  background: transparent;
+}
+#btnManage:hover { background: rgba(255,255,255,0.1); }
+
+/* Main */
+#main {
+  padding: 30px;
+  overflow: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  background: #fff;
+}
+
+/* Cards */
+.card {
+  background: #fff;
+  border: 1px solid var(--sats-border);
+  border-radius: var(--radius);
+  padding: 20px;
+  transition: box-shadow .2s;
+}
+.card:hover { box-shadow: 0 6px 16px rgba(0,0,0,0.08); }
+
+/* Table */
+table { width: 100%; border-collapse: collapse; }
+thead th {
+  padding: 12px 8px;
   font-weight: 700;
-  text-decoration: none;
-  box-shadow: 0 8px 20px rgba(0,0,0,0.12);
-  transition: transform .06s ease, box-shadow .2s ease, filter .15s ease;
+  text-align: left;
+  background: var(--sats-light);
+  color: var(--sats-primary);
+  border-bottom: 2px solid var(--sats-border);
 }
-.feedback-fab:hover{
-  filter: brightness(0.95);
-  transform: translateY(-1px);
-  box-shadow: 0 10px 24px rgba(0,0,0,0.16);
+tbody td { padding: 12px 8px; border-bottom: 1px solid var(--sats-border); }
+tbody tr:nth-child(odd) { background: #fafafa; }
+
+/* Modal */
+#modal { position: fixed; inset: 0; background: rgba(0,0,0,.5); display: none; align-items: center; justify-content: center; }
+#modalContent { background: #fff; border-radius: var(--radius); padding: 24px; width: min(520px, 92vw); }
+.participantRow {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 12px; margin: 10px 0; border: 1px solid var(--sats-border); border-radius: var(--radius);
 }
-.feedback-fab:focus-visible{
-  outline: 3px solid #ccefff; /* accessible focus ring */
-  outline-offset: 3px;
-  box-shadow: 0 0 0 2px var(--sats-dark);
+.muted { color: var(--sats-muted); }
+
+/* Feedback button */
+.feedback-fab {
+  position: fixed; right: 20px; bottom: 20px; border-radius: 999px;
+  background: var(--sats-primary); color: #fff; padding: 12px 18px; font-weight: 700;
+  box-shadow: 0 6px 16px rgba(0,0,0,0.15); text-decoration: none;
+  transition: background .2s, transform .1s;
 }
-@media (max-width: 640px) {
-  .feedback-fab { right: 12px; bottom: 12px; padding: 9px 12px; }
+.feedback-fab:hover { background: #001a2e; transform: translateY(-2px); }
+
+/* Leaderboard & Graph: 50/50 desktop; stacked mobile */
+/* --- Grid layout --- */
+.grid-2 { 
+  display: grid; 
+  gap: 20px; 
+  grid-template-columns: 1fr 1fr; 
+  align-items: stretch; 
+}
+.grid-2 > .card { height: 100%; }
+
+/* Mobile: stack and use full width */
+@media(max-width: 900px) {
+  .grid-2 {
+    grid-template-columns: 1fr; /* stack vertically */
+  }
+  .grid-2 > .card {
+    width: 100%;      /* stretch to full screen width */
+    box-sizing: border-box;
+  }
+  #main {
+    padding: 16px 10px; /* less side padding on mobile so cards look wide */
+  }
 }
 
-  #main{padding:20px; overflow:auto; display:flex; flex-direction:column; gap:14px;}
-  .row{display:flex; align-items:center; gap:10px; flex-wrap:wrap;}
-  .spacer{flex:1;}
-  .dates{color:var(--muted); gap:12px;}
+/* Header */
+.row.header-row {
+  display: flex; align-items: center; justify-content: space-between; gap: 12px;
+}
+#compActions { display: flex; gap: 10px; }
 
-  .grid-2{display:grid; gap:16px; grid-template-columns:1fr 1fr;}
-  @media(max-width:1000px){body{grid-template-columns:1fr;} .grid-2{grid-template-columns:1fr;}}
+/* Dates row + mobile actions */
+.row.dates { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+#mobileActions { display: none; }
+@media(max-width: 900px) {
+  .row.header-row { flex-direction: column; align-items: flex-start; gap: 6px; }
+  #compActions { display: none; } /* move actions to dates row on mobile */
+  .row.dates { gap: 10px; width: 100%; justify-content: space-between; }
+  #mobileActions { display: flex; gap: 8px; width: 100%; }
+  #mobileActions .btn { flex: 1; padding: 10px; font-size: 0.95rem; }
+}
 
-  .card{background:#fff; border:1px solid var(--border); border-radius:14px; padding:14px;}
-  table{width:100%; border-collapse:collapse;}
-  thead th{padding:10px 8px; font-weight:700; color:var(--sats-dark); border-bottom:2px solid var(--border); background:#f0f8fc; text-align:left;}
-  tbody td{padding:12px 8px; border-bottom:1px solid var(--border);}
-  tbody tr:nth-child(odd){background:#fcfdff;}
-  .scoreBtns{display:flex; gap:8px;}
-  .btn.plus{flex:1; font-size:18px; padding:14px 20px; background:var(--sats-primary);}
-  .btn.minus{background:#eef2f6; color:#333; padding:14px 16px;}
+/* ===== Mobile Drawer-Handle Sidebar ===== */
+#drawerHandle { display: none; } /* hidden on desktop */
 
-  #chartWrap{height:360px;}
-  canvas{width:100%!important; height:100%!important;}
+@media(max-width: 900px) {
+  /* Sidebar becomes a top drawer */
+  #sidebar {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    background: var(--sats-primary); color: #fff;
+    box-shadow: 0 4px 14px rgba(0,0,0,0.16);
+    border-bottom-left-radius: 16px;
+    border-bottom-right-radius: 16px;
+    overflow: hidden;
+    transition: height .28s ease;
+    z-index: 1000;
 
-  #modal{position:fixed; inset:0; display:none; align-items:center; justify-content:center; background:rgba(0,0,0,.45);}
-  #modalContent{width:min(520px,92vw); background:#fff; border:1px solid var(--border); border-radius:14px; padding:16px;}
-  .participantRow{display:flex; justify-content:space-between; padding:10px; margin:8px 0; border:1px solid var(--border); border-radius:10px; background:#fff;}
-  .muted{color:var(--muted);}
+    /* collapsed height (just handle + tiny title area) */
+    height: 70px; 
+    /*padding: 0; /* remove internal padding, we wrap inside */
+  }
+
+  /* Handle strip */
+ #drawerHandle {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 80px; /* a bit taller to fit text + handle */
+    background: var(--sats-primary);   /* 🔵 SATS blue background */
+    border-bottom-left-radius: 16px;
+    border-bottom-right-radius: 16px;
+    color: #fff;  /* default text color white */
+  }
+
+  #drawerHandle::after {
+    content: "";
+    margin-top: 8px; /* space below text */
+    width: 44px;
+    height: 5px;
+    border-radius: 3px;
+    background: #fff; /* white grip bar for contrast */
+  }
+
+  #drawerTitle {
+    margin-top: 6px;
+    font-weight: 700;
+    font-size: 0.9rem;
+    color: #fff; /* ensure text is white on blue */
+  }
+
+  #drawerCompName {
+    margin-top: 2px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: #ccefff; /* lighter blue/white for the competition name */
+  }
+
+  
+
+  /* The actual sidebar content container (hidden when collapsed) */
+  #sidebarInner {
+    padding: 16px 20px 20px;
+    display: none; /* hidden collapsed */
+  }
+
+  /* Open state: reveal content and grow height */
+  #sidebar.open {
+    height: 75vh;
+    border-bottom-left-radius: 0;
+    border-bottom-right-radius: 0;
+  }
+  #sidebar.open #sidebarInner { display: block; }
+
+  /* Hide desktop look headings when collapsed */
+  #sidebar:not(.open) h2,
+  #sidebar:not(.open) select,
+  #sidebar:not(.open) #compWrap,
+  #sidebar:not(.open) #btnManage { display: none; }
+
+  
+}
 </style>
 </head>
 
 <body>
 
+<!-- Sidebar with drawer handle -->
 <aside id="sidebar">
-  <h2>Club</h2>
-  <select id="clubSelect"></select>
-  <h2>Competitions</h2>
-  <div id="competitions"></div>
-  <button class="btn" id="btnNewComp">+ New competition</button>
-  <button class="btn ghost" id="btnManage">Manage participants</button>
+  <div id="drawerHandle">
+    <div id="drawerTitle">Change competition</div>
+    <div id="drawerCompName"><span id="compName">No competition</span></div>
+  </div>
+
+  <div id="sidebarInner">
+    <h2>Club</h2>
+    <select id="clubSelect"></select>
+
+    <h2>Competitions</h2>
+    <div id="compWrap">
+      <button class="btn" id="btnNewComp">+ New competition</button>
+      <div id="competitions"></div>
+    </div>
+
+    <button class="btn" id="btnManage">Manage participants</button>
+  </div>
 </aside>
 
 <main id="main">
-  <div class="row">
+  <div class="row header-row">
     <h1 id="compName">No competition</h1>
-    <span class="spacer"></span>
-    <button class="btn ghost" id="btnEnd">End now</button>
-    <button class="btn" id="btnDraw">🎉 Draw winner</button>
+    <!-- Desktop actions -->
+    <div id="compActions">
+      <button class="btn ghost" id="btnEnd">End now</button>
+      <button class="btn ghost" id="btnDraw">🎉 Draw winner</button>
+    </div>
   </div>
+
   <div class="row dates">
     📅 <input type="date" id="startDate"> <input type="date" id="endDate">
     <span class="muted" id="rangeInfo"></span>
+    <!-- Mobile actions -->
+    <div id="mobileActions">
+      <button class="btn ghost" id="btnEndMobile">End now</button>
+      <button class="btn ghost" id="btnDrawMobile">🎉 Draw winner</button>
+    </div>
   </div>
 
   <section class="grid-2">
@@ -141,6 +355,7 @@
   </section>
 </main>
 
+<!-- Modal -->
 <div id="modal">
   <div id="modalContent">
     <div class="row" style="justify-content:space-between">
@@ -148,9 +363,12 @@
       <button class="btn ghost small" onclick="closeModal()">Close</button>
     </div>
     <div id="partList"></div>
-    <div class="row"><input id="newPart" placeholder="New participant name" style="flex:1"/><button class="btn" id="btnAddPart">Add</button></div>
+    <div class="row"><input id="newPart" placeholder="New participant name" style="flex:1"/><button class="btn primary" id="btnAddPart">Add</button></div>
   </div>
 </div>
+
+<!-- Feedback -->
+<a class="feedback-fab" href="https://forms.office.com/e/iHzrELFreB" target="_blank" rel="noopener noreferrer">💬 Feedback</a>
 
 <script>
 /* --- App State --- */
@@ -242,22 +460,33 @@ function switchComp(id){state.active=id; localStorage.setItem("activeComp",id); 
 const active=()=>state.competitions[state.active];
 
 /* --- Players --- */
-function addPlayer(name){
-  const id=Math.random().toString(36).slice(2);
-  const player={id,name};
+async function addPlayer(name) {
+  const id = Math.random().toString(36).slice(2);
+  const player = { id, name };
   state.players.push(player);
-  saveParticipant(player);
+  await saveParticipant(player);  // ⬅️ ensure backend is updated before continuing
 }
 async function removePlayer(pid){
-  state.players=state.players.filter(p=>p.id!==pid);
+  state.players = state.players.filter(p=>p.id!==pid);
   await deleteParticipant(pid);
   for(const c of Object.values(state.competitions)){ delete c.scores[pid]; }
   render();
+  openModal();  // 🔄 refresh modal list
 }
-function renamePlayer(pid){
-  const p=state.players.find(p=>p.id===pid); if(!p)return;
-  const n=prompt("New name:",p.name); if(!n)return;
-  p.name=n; saveParticipant(p);
+async function renamePlayer(pid){
+  const p = state.players.find(p=>p.id===pid); if(!p) return;
+  const n = prompt("New name:", p.name); if(!n) return;
+
+  // Remove old participant
+  await deleteParticipant(pid);
+
+  // Add new participant with same id
+  const updated = { id: pid, name: n };
+  state.players = state.players.map(x => x.id === pid ? updated : x);
+  await saveParticipant(updated);
+
+  render();
+  openModal(); // refresh modal
 }
 
 /* --- Scoring --- */
@@ -278,6 +507,7 @@ async function dec(pid){
   await saveCompetition(c);
   render();
 }
+
 /* --- Chart --- */
 const BRAND_COLORS=["#009fdb","#002b45","#56c271","#f4a261","#e76f51"];
 function colorFor(pid,idx){if(idx<BRAND_COLORS.length)return BRAND_COLORS[idx]; let h=0; for(let i=0;i<pid.length;i++)h=(h*31+pid.charCodeAt(i))%360; return `hsl(${h} 55% 60%)`;}
@@ -294,41 +524,7 @@ function buildDateLabels(c) {
   return arr;
 }
 
-function buildChart() {
-  const c = active();
-  if (!c) return;
-  const ctx = document.getElementById("chart").getContext("2d");
-  const labels = buildDateLabels(c);
-
-  const datasets = state.players.map((p, idx) => {
-    const data = labels.map(d => {
-      const dayEnd = new Date(d + "T23:59:59").getTime();
-      return c.events.filter(ev => ev.pid === p.id && ev.time <= dayEnd).length;
-    });
-    return {
-      label: p.name,
-      data,
-      borderColor: colorFor(p.id, idx),
-      borderWidth: 2,
-      tension: 0.25,
-      pointRadius: 0,
-    };
-  });
-
-  const maxScore = Math.max(1, ...datasets.flatMap(ds => ds.data));
-  if (chart) chart.destroy();
-  chart = new Chart(ctx, {
-    type: "line",
-    data: { labels: labels.map(fmtShort), datasets },
-    options: {
-      maintainAspectRatio: false,
-      scales: {
-        x: { ticks: { maxTicksLimit: 8 } },
-        y: { beginAtZero: true, suggestedMax: maxScore + 2 },
-      },
-    },
-  });
-}function buildChart(){
+function buildChart(){
   const c = active();
   if(!c) return;
   const ctx = document.getElementById("chart").getContext("2d");
@@ -369,7 +565,6 @@ function buildChart() {
   });
 }
 
-  
 /* --- Render --- */
 function renderCompetitions(){
   const list=document.getElementById("competitions"); list.innerHTML="";
@@ -394,8 +589,8 @@ function render(){
   state.players.map(p=>({id:p.id,name:p.name,score:c.scores[p.id]||0}))
     .sort((a,b)=>b.score-a.score).forEach((p,i)=>{const tr=document.createElement("tr");
       tr.innerHTML=`<td>${i+1}</td><td>${p.name}</td><td><b>${p.score}</b></td>
-      <td class="scoreBtns"><button class="btn plus" onclick="inc('${p.id}')">+1</button>
-      <button class="btn minus" onclick="dec('${p.id}')">-1</button></td>`;
+      <td class="scoreBtns"><button class="btn primary" onclick="inc('${p.id}')">+1</button>
+      <button class="btn ghost small" onclick="dec('${p.id}')">-1</button></td>`;
       tbody.appendChild(tr);});
   buildChart();
 }
@@ -410,26 +605,51 @@ function endNow(){const c=active(); c.ended=true; c.end=new Date().toISOString()
 
 /* --- Events --- */
 document.getElementById("btnNewComp").onclick=newComp;
-document.getElementById("btnManage").onclick=openModal;
+document.getElementById("btnManage").onclick = () => {
+  document.getElementById("sidebar").classList.remove("open"); // collapse sidebar
+  openModal();
+};
+
+/* Desktop actions */
 document.getElementById("btnDraw").onclick=drawWinner;
 document.getElementById("btnEnd").onclick=endNow;
-document.getElementById("btnAddPart").onclick=()=>{const v=document.getElementById("newPart").value.trim(); if(v) addPlayer(v); document.getElementById("newPart").value="";};
-document.getElementById("rangeAll").onclick=()=>{chartRange="all"; buildChart();};
-document.getElementById("range30").onclick=()=>{chartRange="30"; buildChart();};
-document.getElementById("range7").onclick=()=>{chartRange="7"; buildChart();};
+
+/* Mobile actions */
+document.getElementById("btnDrawMobile").onclick=drawWinner;
+document.getElementById("btnEndMobile").onclick=endNow;
+
+  /* Add Button actions */
+ document.getElementById("btnAddPart").onclick = async () => {
+  const v = document.getElementById("newPart").value.trim();
+  if (v) {
+    await addPlayer(v);                 // wait for save
+    document.getElementById("newPart").value = "";
+    render();
+    openModal();                        // refresh modal immediately
+  }
+};
+
+/* Range buttons (you can add logic if you filter events by range later) */
+document.getElementById("rangeAll").onclick=()=>{ chartRange="all"; buildChart(); };
+document.getElementById("range30").onclick=()=>{ chartRange="30"; buildChart(); };
+document.getElementById("range7").onclick=()=>{ chartRange="7"; buildChart(); };
+
+/* --- Drawer handle toggle (mobile) --- */
+const drawer = document.getElementById("sidebar");
+const handle = document.getElementById("drawerHandle");
+handle.addEventListener("click", (e) => {
+  e.stopPropagation();
+  drawer.classList.toggle("open");
+});
+/* If you want tap-outside-to-close when open, uncomment below:*/
+document.addEventListener("click", (e)=>{
+  if (drawer.classList.contains("open") && !drawer.contains(e.target)) {
+    drawer.classList.remove("open");
+  }
+});
 
 /* --- Start --- */
 window.onload = () => { loadClubs(); };
 </script>
-  <a
-  class="feedback-fab"
-  href="https://forms.office.com/e/iHzrELFreB"
-  target="_blank"
-  rel="noopener noreferrer"
-  aria-label="Give feedback (opens in new tab)"
-  title="Give feedback"
->
-  💬 Feedback
-</a>
 </body>
 </html>
