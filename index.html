@@ -228,44 +228,39 @@ tbody tr:nth-child(odd) { background: #fafafa; }
   }
 
   /* Handle strip */
-  #drawerHandle {
+ #drawerHandle {
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    height: 70px; /* a bit taller to fit text + handle */
-    position: relative;
+    height: 80px; /* a bit taller to fit text + handle */
+    background: var(--sats-primary);   /* 🔵 SATS blue background */
+    border-bottom-left-radius: 16px;
+    border-bottom-right-radius: 16px;
+    color: #fff;  /* default text color white */
   }
-#drawerHandle::after {
+
+  #drawerHandle::after {
     content: "";
-    margin-top: 6px; /* space below text */
+    margin-top: 8px; /* space below text */
     width: 44px;
     height: 5px;
     border-radius: 3px;
-    background: #d3d6db;
+    background: #fff; /* white grip bar for contrast */
   }
-  
-  /* the little rounded line */
-  #drawerHandle::before {
-    content: "";
-    position: absolute;
-    top: 6px;
-    left: 50%; transform: translateX(-50%);
-    width: 44px; height: 5px; border-radius: 3px; background: #d3d6db;
-  }
-  /* title centered under the line */
- #drawerTitle {
-    margin-top: 10px;
+
+  #drawerTitle {
+    margin-top: 6px;
     font-weight: 700;
     font-size: 0.9rem;
-    color: var(--sats-primary);
+    color: #fff; /* ensure text is white on blue */
   }
 
   #drawerCompName {
     margin-top: 2px;
     font-size: 0.85rem;
     font-weight: 600;
-    color: var(--sats-text);
+    color: #ccefff; /* lighter blue/white for the competition name */
   }
 
   /* The actual sidebar content container (hidden when collapsed) */
