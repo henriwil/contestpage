@@ -214,7 +214,7 @@ tbody tr:nth-child(odd) { background: #fafafa; }
   #sidebar {
     position: fixed;
     top: 0; left: 0; right: 0;
-    background: var(--sats-primary); color: var(--sats-text);
+    background: var(--sats-primary); color: #fff;
     box-shadow: 0 4px 14px rgba(0,0,0,0.16);
     border-bottom-left-radius: 16px;
     border-bottom-right-radius: 16px;
@@ -223,7 +223,7 @@ tbody tr:nth-child(odd) { background: #fafafa; }
     z-index: 1000;
 
     /* collapsed height (just handle + tiny title area) */
-    /*height: 60px; */
+    height: 70px; 
     /*padding: 0; /* remove internal padding, we wrap inside */
   }
 
@@ -263,15 +263,7 @@ tbody tr:nth-child(odd) { background: #fafafa; }
     color: #ccefff; /* lighter blue/white for the competition name */
   }
 
-   /* buttons inside sidebar */
-  #btnNewComp {
-    background: #fff; 
-    color: var(--sats-primary);
-  }
-  #btnManage {
-    border: 2px solid #fff;
-    color: #fff;
-  }
+  
 
   /* The actual sidebar content container (hidden when collapsed) */
   #sidebarInner {
