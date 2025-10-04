@@ -229,12 +229,22 @@ tbody tr:nth-child(odd) { background: #fafafa; }
 
   /* Handle strip */
   #drawerHandle {
-    display: block;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 70px; /* a bit taller to fit text + handle */
     position: relative;
-    height: 44px;
-    background: #fff;
-    cursor: pointer;
   }
+#drawerHandle::after {
+    content: "";
+    margin-top: 6px; /* space below text */
+    width: 44px;
+    height: 5px;
+    border-radius: 3px;
+    background: #d3d6db;
+  }
+  
   /* the little rounded line */
   #drawerHandle::before {
     content: "";
@@ -244,11 +254,18 @@ tbody tr:nth-child(odd) { background: #fafafa; }
     width: 44px; height: 5px; border-radius: 3px; background: #d3d6db;
   }
   /* title centered under the line */
-  #drawerTitle {
-    position: absolute;
-    left: 0; right: 0; top: 14px;
-    text-align: center; font-weight: 700; font-size: 0.95rem;
+ #drawerTitle {
+    margin-top: 10px;
+    font-weight: 700;
+    font-size: 0.9rem;
     color: var(--sats-primary);
+  }
+
+  #drawerCompName {
+    margin-top: 2px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--sats-text);
   }
 
   /* The actual sidebar content container (hidden when collapsed) */
@@ -285,7 +302,7 @@ tbody tr:nth-child(odd) { background: #fafafa; }
 <aside id="sidebar">
   <div id="drawerHandle">
     <div id="drawerTitle">Change competition</div>
-     <h1 id="compName">No competition</h1>
+    <div id="drawerCompName"><span id="compName">No competition</span></div>
   </div>
 
   <div id="sidebarInner">
