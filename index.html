@@ -11,153 +11,378 @@
 <script src="clubs.js"></script>
 
 <style>
-:root{
-  --sats-primary:#002b45;     /* Dark SATS blue */
-  --sats-accent:#f15a29;      /* SATS orange */
-  --sats-light:#f7f7f7;       /* Light background */
-  --sats-border:#e6e6e6;      /* Borders */
-  --sats-text:#0a1c2b;        /* Main text */
-  --sats-muted:#667085;       /* Muted text */
-  --radius:12px;
+:root {
+  --sats-primary: #002b45;
+  --sats-accent: #f15a29;
+  --sats-light: #f7f7f7;
+  --sats-border: #e6e6e6;
+  --sats-text: #0a1c2b;
+  --sats-muted: #667085;
+  --radius: 10px;
 }
 
-/* ===== Base ===== */
-html,body{height:100%;margin:0;font-family:Inter,"Helvetica Neue",Arial,sans-serif;background:var(--sats-light);color:var(--sats-text);line-height:1.4;}
-h1,h2,h3{margin:0;font-weight:700;color:var(--sats-primary);}
-h1{font-size:2rem;} h2{font-size:1.25rem;} h3{font-size:1.1rem;}
-.muted{color:var(--sats-muted);}
+/* Base layout & typography */
+html, body {
+  height: 100%;
+  margin: 0;
+  font-family: "Inter", "Helvetica Neue", Arial, sans-serif;
+  background: var(--sats-light);
+  color: var(--sats-text);
+  line-height: 1.4;
+}
+h1, h2, h3 {
+  margin: 0;
+  font-weight: 700;
+  color: var(--sats-primary);
+}
+h1 { font-size: 2rem; }
+h2 { font-size: 1.4rem; }
+h3 { font-size: 1.2rem; }
 
 /* Buttons */
-.btn{cursor:pointer;border:none;border-radius:999px;padding:12px 18px;font-weight:700;font-size:1rem;transition:background .2s,box-shadow .2s,color .2s,border-color .2s;}
-.btn.primary{background:var(--sats-accent);color:#fff;}
-.btn.primary:hover{filter:brightness(.95);}
-.btn.ghost{background:transparent;color:var(--sats-primary);border:2px solid var(--sats-primary);}
-.btn.ghost:hover{background:var(--sats-primary);color:#fff;}
-.btn.small{padding:8px 12px;font-size:.9rem;border-radius:999px}
+.btn {
+  cursor: pointer;
+  border: none;
+  border-radius: var(--radius);
+  padding: 12px 22px;
+  font-weight: 700;
+  font-size: 1rem;
+  transition: background .2s, box-shadow .2s, color .2s, border-color .2s;
+}
+.btn.primary { background: var(--sats-accent); color: #fff; }
+.btn.primary:hover { background: #d94d1f; }
+.btn.ghost {
+  background: transparent;
+  color: var(--sats-primary);
+  border: 2px solid var(--sats-primary);
+}
+.btn.ghost:hover { background: var(--sats-primary); color: #fff; }
+.btn.small { padding: 8px 14px; font-size: 0.9rem; }
 
 /* ===== Layout ===== */
-body{display:grid;grid-template-columns:320px 1fr;height:100vh;}
-@media(max-width:900px){body{grid-template-columns:1fr;}}
+body { display: grid; grid-template-columns: 320px 1fr; height: 100vh; }
+@media(max-width: 900px) { body { grid-template-columns: 1fr; } }
 
 /* ===== Sidebar (desktop) ===== */
-#sidebar{
-  background:var(--sats-primary);color:#fff;padding:20px;
-  display:flex;flex-direction:column;gap:14px;
-  height:100vh;box-sizing:border-box;overflow:hidden;
+#sidebar {
+ background: var(--sats-primary);
+  color: #fff;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  height: 100vh; /* fill screen height */
+  box-sizing: border-box;
+  overflow: hidden; /* no scroll on the entire sidebar */
 }
-#sidebar h2{color:#fff;}
+#sidebar h2 { color: #fff; }
 
-#sidebarInner{
-  display:flex;flex-direction:column;height:100%;
-  /* allow inner flex children to actually shrink for scrolling areas */
-  min-height:0;overflow:hidden;
+/* Sidebar inner wrapper */
+#sidebarInner {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  overflow: hidden;
 }
 
 /* Club row */
-.club-row{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:12px;}
-.club-row h2{font-size:1.05rem;color:#fff;}
-#clubSelect{flex:1;max-width:170px;padding:6px 8px;border:1px solid #fff;border-radius:8px;background:rgba(255,255,255,.12);color:#fff;font-weight:600;appearance:none;}
-#clubSelect option{color:var(--sats-text);background:#fff;}
+.club-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 16px; /* ✅ gives breathing room */
+}
+.club-row h2 { font-size: 1.1rem; color: #fff; }
+#clubSelect {
+  flex: 1;
+  max-width: 160px;
+  padding: 6px 8px;
+  border: 1px solid #fff;
+  border-radius: 6px;
+  background: rgba(255,255,255,0.1);
+  color: #fff;
+  font-weight: 600;
+  appearance: none;
+  font-size: medium;
+}
+#clubSelect option {
+  color: var(--sats-text);
+  background: #fff;
+}
 
-/* Competitions area */
-#compWrap{
-  display:flex;flex-direction:column;gap:10px;flex:1;
-  /* 🔑 this makes the scroll area behave on iPad/desktop */
-  min-height:0;overflow:hidden;
+/* Competitions list */
+#compWrap {
+   flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
 }
-#btnNewComp{
-  position:sticky;top:0;z-index:2;background:#fff;color:var(--sats-primary);
-  border:2px solid var(--sats-border);border-radius:12px;margin-bottom:6px;
+#competitions {
+ flex: 1;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  margin-top: 8px;
+  padding-right: 6px;
 }
-#btnNewComp:hover{background:var(--sats-light);}
+.competition {
+  padding: 10px 12px;
+  margin: 6px 0;
+  border: 1px solid var(--sats-border);
+  border-radius: 12px;
+  background: #fff;
+  cursor: pointer;
+  color: var(--sats-text);
+  line-height: 1.4;
+  
+}
+.competition.active {
+  background: var(--sats-accent);
+  color: #fff;
+  border-color: var(--sats-accent);
+}
+.competition.finished {
+  background: #f0f0f0;
+  color: #888;
+  border: 1px solid #ddd;
+  font-style: italic;
+}
+.compTitle { font-weight: 700; font-size: 1rem; }
+.compDates { font-size: 0.85rem; opacity: 0.9; margin-top: 2px; }
+.competition.active .compDates { opacity: 0.95; }
+.ended { font-weight: 500; font-style: italic; opacity: 0.9; }
 
-#competitions{
-  flex:1;overflow-y:auto;margin-top:6px;padding-right:6px;scroll-behavior:smooth;-webkit-overflow-scrolling:touch;
-  /* Subtle fade top/bottom when scrollable (visual cue) */
-  mask-image: linear-gradient(to bottom, rgba(0,0,0,.0) 0, rgba(0,0,0,1) 16px, rgba(0,0,0,1) calc(100% - 16px), rgba(0,0,0,.0) 100%);
+/* Buttons inside sidebar */
+#btnNewComp {
+  position: sticky;
+  top: 0;
+  z-index: 2;
+  background: #fff;
+  color: var(--sats-primary);
+  border: 2px solid var(--sats-border);
+  border-radius: 12px;
+  margin-bottom: 10px;
 }
-.competition{padding:10px 12px;margin:6px 0;border:1px solid var(--sats-border);border-radius:12px;background:#fff;cursor:pointer;line-height:1.35;color:var(--sats-text);}
-.competition.active{background:var(--sats-accent);color:#fff;border-color:var(--sats-accent);}
-.competition.finished{background:#f0f0f0;color:#888;border:1px solid #ddd;font-style:italic;}
-.compTitle{font-weight:800;font-size:1rem;}
-.compDates{font-size:.85rem;opacity:.9;margin-top:2px;}
-.competition.active .compDates{opacity:.95;}
-.ended{font-weight:600;font-style:italic;opacity:.95;}
+#btnNewComp:hover { background: var(--sats-light); }
 
-/* Keep Manage participants visible and clickable even if list is long */
-#btnManage{
-  border:2px solid #fff;color:#fff;background:transparent;margin-top:auto;
-  position:sticky;bottom:0;z-index:3;padding:12px 18px;border-radius:12px;
-  backdrop-filter: blur(2px); /* keeps it readable over content */
+#btnManage {
+ border: 2px solid #fff;
+  color: #fff;
+  background: transparent;
+  margin-top: auto;
+  position: sticky;
+  bottom: 0;
+  z-index: 5;
 }
-#btnManage:hover{background:rgba(255,255,255,.12);}
+#btnManage:hover { background: rgba(255,255,255,0.1); }
 
 /* ===== Main ===== */
-#main{padding:30px;overflow:auto;display:flex;flex-direction:column;gap:20px;background:#fff;}
-.card{background:#fff;border:1px solid var(--sats-border);border-radius:var(--radius);padding:20px;transition:box-shadow .2s;}
-.card:hover{box-shadow:0 6px 16px rgba(0,0,0,.08);}
+#main {
+  padding: 30px;
+  overflow: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  background: #fff;
+}
+.card {
+  background: #fff;
+  border: 1px solid var(--sats-border);
+  border-radius: var(--radius);
+  padding: 20px;
+  transition: box-shadow .2s;
+}
+.card:hover { box-shadow: 0 6px 16px rgba(0,0,0,0.08); }
 
-/* Table */
-table{width:100%;border-collapse:collapse;}
-thead th{padding:12px 8px;font-weight:800;text-align:left;background:var(--sats-light);color:var(--sats-primary);border-bottom:2px solid var(--sats-border);}
-tbody td{padding:12px 8px;border-bottom:1px solid var(--sats-border);}
-tbody tr:nth-child(odd){background:#fafafa;}
-.scoreBtns{display:flex;gap:8px;}
+/* Tables */
+table { width: 100%; border-collapse: collapse; }
+thead th {
+  padding: 12px 8px;
+  font-weight: 700;
+  text-align: left;
+  background: var(--sats-light);
+  color: var(--sats-primary);
+  border-bottom: 2px solid var(--sats-border);
+}
+tbody td { padding: 12px 8px; border-bottom: 1px solid var(--sats-border); }
+tbody tr:nth-child(odd) { background: #fafafa; }
 
-/* Grid: leaderboard & chart 50/50 */
-.grid-2{display:grid;gap:20px;grid-template-columns:1fr 1fr;align-items:stretch;}
-.grid-2>.card{height:100%;}
+/* ===== Modal ===== */
+#modal {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,.5);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  z-index: 2000;
+}
+#modalContent {
+  position: relative;
+  background: #fff;
+  border-radius: var(--radius);
+  padding: 24px;
+  width: min(520px, 92vw);
+  box-shadow: 0 8px 20px rgba(0,0,0,0.25);
+}
+.participantRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px;
+  margin: 10px 0;
+  border: 1px solid var(--sats-border);
+  border-radius: var(--radius);
+}
+.muted { color: var(--sats-muted); }
+.modal-close {
+  position: absolute;
+  top: 10px; right: 10px;
+  border: none;
+  background: transparent;
+  color: var(--sats-primary);
+  font-size: 1.1rem;
+  cursor: pointer;
+  border-radius: 6px;
+  padding: 6px 10px;
+}
+.modal-close:hover {
+  color: var(--sats-accent);
+  background: rgba(0,0,0,0.05);
+}
 
-/* Header & dates */
-.row.header-row{display:flex;align-items:center;justify-content:space-between;gap:12px;}
-#compActions{display:flex;gap:10px;}
-.row.dates{display:flex;align-items:center;gap:12px;flex-wrap:wrap;}
-#mobileActions{display:none;}
+/* ===== Feedback FAB ===== */
+.feedback-fab {
+  position: fixed;
+  right: 20px; bottom: 20px;
+  border-radius: 999px;
+  background: #fff;
+  color: var(--sats-primary);
+  padding: 12px 18px;
+  font-weight: 700;
+  box-shadow: 0 6px 16px rgba(0,0,0,0.15);
+  text-decoration: none;
+  transition: background .2s, transform .1s;
+}
+.feedback-fab:hover { background: #001a2e; color: #fff; transform: translateY(-2px); }
 
-/* FAB */
-.feedback-fab{position:fixed;right:20px;bottom:20px;border-radius:999px;background:#fff;color:var(--sats-primary);padding:12px 18px;font-weight:700;box-shadow:0 6px 16px rgba(0,0,0,.15);text-decoration:none;transition:background .2s,transform .1s;}
-.feedback-fab:hover{background:#001a2e;color:#fff;transform:translateY(-2px);}
+/* ===== Grid layout ===== */
+.grid-2 {
+  display: grid;
+  gap: 20px;
+  grid-template-columns: 1fr 1fr;
+  align-items: stretch;
+}
+.grid-2 > .card { height: 100%; }
+@media(max-width: 900px) {
+  .grid-2 { grid-template-columns: 1fr; }
+  .grid-2 > .card {
+    width: 100%;
+    box-sizing: border-box;
+  }
+  #main { padding: 16px 10px; }
+}
 
-/* ===== Mobile drawer (≤900px) ===== */
-#drawerHandle{display:none;}
-@media(max-width:900px){
-  .grid-2{grid-template-columns:1fr;}
-  #main{padding:16px 10px;}
-  .row.header-row{flex-direction:column;align-items:flex-start;gap:6px;}
-  #compActions{display:none;}
-  #mobileActions{display:flex;gap:8px;width:100%;}
-  #mobileActions .btn{flex:1;padding:10px;font-size:.95rem;}
+/* ===== Header & Dates ===== */
+.row.header-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+#compActions { display: flex; gap: 10px; }
+.row.dates {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+#mobileActions { display: none; }
+@media(max-width: 900px) {
+  .row.header-row { flex-direction: column; align-items: flex-start; gap: 6px; }
+  #compActions { display: none; }
+  .row.dates { width: 100%; justify-content: space-between; gap: 10px; }
+  #mobileActions { display: flex; gap: 8px; width: 100%; }
+  #mobileActions .btn { flex: 1; padding: 10px; font-size: 0.95rem; }
+}
 
-  #sidebar{position:fixed;top:0;left:0;right:0;background:var(--sats-primary);color:#fff;box-shadow:0 4px 14px rgba(0,0,0,.16);border-bottom-left-radius:16px;border-bottom-right-radius:16px;transition:height .28s ease;z-index:1000;height:60px;overflow:hidden;}
-  #drawerHandle{display:flex;flex-direction:column;align-items:center;justify-content:center;height:80px;background:var(--sats-primary);border-bottom-left-radius:16px;border-bottom-right-radius:16px;color:#fff;}
-  #drawerHandle::after{content:"";margin-top:8px;width:44px;height:5px;border-radius:3px;background:#fff;}
-  #drawerTitle{margin-top:6px;font-weight:800;font-size:.9rem;}
-  #drawerCompName{margin-top:2px;font-weight:600;color:#ccefff;}
+/* ===== Mobile Drawer Sidebar ===== */
+#drawerHandle { display: none; }
+@media(max-width: 900px) {
+  #sidebar {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    background: var(--sats-primary);
+    color: #fff;
+    box-shadow: 0 4px 14px rgba(0,0,0,0.16);
+    border-bottom-left-radius: 16px;
+    border-bottom-right-radius: 16px;
+    transition: height .28s ease;
+    z-index: 1000;
+    height: 60px;
+    overflow: hidden;
+  }
 
-  #sidebar.open{height:75vh;overflow:visible;border-bottom-left-radius:0;border-bottom-right-radius:0;}
-  #sidebar.open #sidebarInner{display:flex;flex-direction:column;height:100%;min-height:0;overflow:hidden;}
-  #sidebar.open #competitions{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;max-height:calc(75vh - 240px);}
-  #btnManage{position:sticky;bottom:0;background:var(--sats-primary);}
+  /* Drawer handle */
+  #drawerHandle {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 80px;
+    background: var(--sats-primary);
+    border-bottom-left-radius: 16px;
+    border-bottom-right-radius: 16px;
+    color: #fff;
+  }
+  #drawerHandle::after {
+    content: "";
+    margin-top: 8px;
+    width: 44px;
+    height: 5px;
+    border-radius: 3px;
+    background: #fff;
+  }
+  #drawerTitle { margin-top: 6px; font-weight: 700; font-size: 0.9rem; }
+  #drawerCompName { margin-top: 2px; font-weight: 600; color: #ccefff; }
 
-  /* Collapse hides inner content */
+  /* Expanded */
+  #sidebar.open {
+    height: 75vh;
+    overflow: visible;
+    border-bottom-left-radius: 0;
+    border-bottom-right-radius: 0;
+  }
+  #sidebar.open #sidebarInner {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    overflow: hidden;
+  }
+  #sidebar.open #competitions {
+    flex: 1;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    max-height: calc(75vh - 240px);
+  }
+  #btnManage {
+    position: sticky;
+    bottom: 0;
+    background: var(--sats-primary);
+  }
+
+  /* Hide inner content when collapsed */
   #sidebar:not(.open) h2,
   #sidebar:not(.open) select,
   #sidebar:not(.open) #compWrap,
-  #sidebar:not(.open) #btnManage{display:none;}
+  #sidebar:not(.open) #btnManage { display: none; }
 }
-
-/* ===== Modal ===== */
-#modal{position:fixed;inset:0;background:rgba(0,0,0,.5);display:none;align-items:center;justify-content:center;z-index:2000;}
-#modalContent{position:relative;background:#fff;border-radius:var(--radius);padding:24px;width:min(520px,92vw);box-shadow:0 8px 20px rgba(0,0,0,.25);}
-.participantRow{display:flex;justify-content:space-between;align-items:center;padding:12px;margin:10px 0;border:1px solid var(--sats-border);border-radius:var(--radius);}
-.modal-close{position:absolute;top:10px;right:10px;border:none;background:transparent;color:var(--sats-primary);font-size:1.1rem;cursor:pointer;border-radius:6px;padding:6px 10px;}
-.modal-close:hover{color:var(--sats-accent);background:rgba(0,0,0,.05);}
 </style>
 </head>
 
 <body>
 
-<!-- Sidebar / Drawer -->
+<!-- Sidebar with drawer handle -->
 <aside id="sidebar">
   <div id="drawerHandle">
     <div id="drawerTitle">Selected competition</div>
@@ -165,10 +390,10 @@ tbody tr:nth-child(odd){background:#fafafa;}
   </div>
 
   <div id="sidebarInner">
-    <div class="club-row">
-      <h2>Club</h2>
-      <select id="clubSelect"></select>
-    </div>
+   <div class="club-row">
+  <h2>Club</h2>
+  <select id="clubSelect"></select>
+</div>
 
     <h2>Competitions</h2>
     <div id="compWrap">
@@ -180,10 +405,10 @@ tbody tr:nth-child(odd){background:#fafafa;}
   </div>
 </aside>
 
-<!-- Main -->
 <main id="main">
   <div class="row header-row">
-    <h1 id="mainCompName">No competition</h1>
+   <h1 id="mainCompName">No competition</h1>
+    <!-- Desktop actions -->
     <div id="compActions">
       <button class="btn ghost" id="btnEnd">End now</button>
       <button class="btn ghost" id="btnDraw">🎉 Draw winner</button>
@@ -193,6 +418,7 @@ tbody tr:nth-child(odd){background:#fafafa;}
   <div class="row dates">
     📅 <input type="date" id="startDate"> <input type="date" id="endDate">
     <span class="muted" id="rangeInfo"></span>
+    <!-- Mobile actions -->
     <div id="mobileActions">
       <button class="btn ghost" id="btnEndMobile">End now</button>
       <button class="btn ghost" id="btnDrawMobile">🎉 Draw winner</button>
@@ -208,7 +434,7 @@ tbody tr:nth-child(odd){background:#fafafa;}
       </table>
     </div>
     <div class="card">
-      <div class="row" style="justify-content:space-between;margin-bottom:6px">
+      <div class="row" style="justify-content:space-between; margin-bottom:6px">
         <h2>Score development</h2>
         <div class="row">
           <button class="btn small ghost" id="rangeAll">All</button>
@@ -216,7 +442,7 @@ tbody tr:nth-child(odd){background:#fafafa;}
           <button class="btn small ghost" id="range7">7d</button>
         </div>
       </div>
-      <div id="chartWrap" style="height:360px"><canvas id="chart"></canvas></div>
+      <div id="chartWrap"><canvas id="chart"></canvas></div>
     </div>
   </section>
 </main>
@@ -224,11 +450,11 @@ tbody tr:nth-child(odd){background:#fafafa;}
 <!-- Modal -->
 <div id="modal">
   <div id="modalContent">
-    <button class="btn ghost small modal-close" onclick="closeModal()">✕</button>
+    <button class="btn ghost small modal-close" onclick="closeModal()">✕</button> <!-- moved out, top-right -->
     <h3>Participants (club specific)</h3>
     <div id="partList"></div>
-    <div class="row" style="gap:8px;margin-top:12px">
-      <input id="newPart" placeholder="New participant name" style="flex:1;padding:10px 12px;border:1px solid var(--sats-border);border-radius:10px"/>
+    <div class="row">
+      <input id="newPart" placeholder="New participant name" style="flex:1"/>
       <button class="btn primary" id="btnAddPart">Add</button>
     </div>
   </div>
@@ -242,21 +468,19 @@ tbody tr:nth-child(odd){background:#fafafa;}
 let state={competitions:{},players:[],active:null,activeClub:""};
 let chart, chartRange="all";
 
-/* Utils */
 function fmtShort(dateStr){
-  const d=new Date(dateStr+"T00:00:00");
+  const d=new Date(dateStr+"T00:00");
   const dd=String(d.getDate()).padStart(2,"0");
   const mm=String(d.getMonth()+1).padStart(2,"0");
   const yy=String(d.getFullYear()).slice(-2);
   return `${dd}/${mm}/${yy}`;
 }
-const active=()=>state.competitions[state.active];
 
 /* --- Backend calls --- */
 async function loadClubs(){
   const sel=document.getElementById("clubSelect");
   sel.innerHTML="";
-  (clubs||[]).forEach(cl=>{
+  clubs.forEach(cl=>{
     const opt=document.createElement("option");
     opt.value=cl.id; opt.textContent=cl.name;
     sel.appendChild(opt);
@@ -268,234 +492,260 @@ async function loadClubs(){
     loadParticipants();
   };
   const savedClub=localStorage.getItem("activeClub");
-  state.activeClub=savedClub||((clubs[0]||{}).id||"");
-  if(state.activeClub) sel.value=state.activeClub;
+  state.activeClub=savedClub||clubs[0].id;
+  sel.value=state.activeClub;
   loadCompetitions();
   loadParticipants();
 }
 
 async function loadCompetitions(){
-  const res=await fetch("/.netlify/functions/competitions");
-  const all=await res.json();
-  state.competitions=Object.fromEntries(Object.entries(all||{}).filter(([id,c])=>c.clubId===state.activeClub));
-  const ids=Object.keys(state.competitions);
-  if(ids.length && !state.active){
+  const res = await fetch("/.netlify/functions/competitions");
+  const all = await res.json();
+  state.competitions = Object.fromEntries(Object.entries(all).filter(([id,c])=>c.clubId===state.activeClub));
+  const ids = Object.keys(state.competitions);
+  if (ids.length && !state.active) {
     const savedComp=localStorage.getItem("activeComp");
-    state.active=savedComp && state.competitions[savedComp] ? savedComp : ids.sort().reverse()[0];
+    state.active = savedComp && state.competitions[savedComp] ? savedComp : ids.sort().reverse()[0];
   }
   render();
 }
 async function saveCompetition(comp){
-  await fetch("/.netlify/functions/competitions",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(comp)});
+  await fetch("/.netlify/functions/competitions",{
+    method:"POST", headers:{"Content-Type":"application/json"}, body:JSON.stringify(comp)
+  });
   await loadCompetitions();
 }
 
-async function loadParticipants(){
-  if(!state.activeClub) return;
-  const res=await fetch(`/.netlify/functions/participants?clubId=${state.activeClub}`);
-  const data=await res.json();
-  state.players=Array.isArray(data)?data:(data.participants||[]);
+async function load(){
+  if (!state.activeClub) return;
+  const res = await fetch(`/.netlify/functions/?clubId=${state.activeClub}`);
+  const data = await res.json();
+  state.players = Array.isArray(data) ? data : (data.participants || []);
   render();
 }
 async function saveParticipant(player){
-  await fetch(`/.netlify/functions/participants?clubId=${state.activeClub}`,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(player)});
+  await fetch(`/.netlify/functions/participants?clubId=${state.activeClub}`,{
+    method:"POST", headers:{"Content-Type":"application/json"}, body:JSON.stringify(player)
+  });
   await loadParticipants();
 }
 async function deleteParticipant(id){
-  await fetch(`/.netlify/functions/participants?clubId=${state.activeClub}`,{method:"DELETE",headers:{"Content-Type":"application/json"},body:JSON.stringify({id})});
+  await fetch(`/.netlify/functions/participants?clubId=${state.activeClub}`,{
+    method:"DELETE", headers:{"Content-Type":"application/json"}, body:JSON.stringify({id})
+  });
   await loadParticipants();
 }
 
 /* --- Competitions --- */
 function newComp(){
-  const name=prompt("Competition name"); if(!name) return;
+  const name=prompt("Competition name"); if(!name)return;
   const id=Date.now().toString();
   const now=new Date();
   state.competitions[id]={
     id,name,clubId:state.activeClub,
     start:now.toISOString().slice(0,10),
     end:new Date(now.getTime()+30*86400000).toISOString().slice(0,10),
-    scores:{},events:[],ended:false
-  };
+    scores:{}, events:[], ended:false};
   state.active=id; localStorage.setItem("activeComp",id);
   saveCompetition(state.competitions[id]);
 }
 function switchComp(id){state.active=id; localStorage.setItem("activeComp",id); render();}
+const active=()=>state.competitions[state.active];
 
 /* --- Players --- */
-async function addPlayer(name){
-  const id=Math.random().toString(36).slice(2);
-  const player={id,name};
+async function addPlayer(name) {
+  const id = Math.random().toString(36).slice(2);
+  const player = { id, name };
   state.players.push(player);
-  await saveParticipant(player);
+  await saveParticipant(player);  // ⬅️ ensure backend is updated before continuing
 }
 async function removePlayer(pid){
-  state.players=state.players.filter(p=>p.id!==pid);
+  state.players = state.players.filter(p=>p.id!==pid);
   await deleteParticipant(pid);
   for(const c of Object.values(state.competitions)){ delete c.scores[pid]; }
-  render(); openModal();
+  render();
+  openModal();  // 🔄 refresh modal list
 }
 async function renamePlayer(pid){
-  const p=state.players.find(x=>x.id===pid); if(!p) return;
-  const n=prompt("New name:",p.name); if(!n) return;
+  const p = state.players.find(p=>p.id===pid); if(!p) return;
+  const n = prompt("New name:", p.name); if(!n) return;
+
+  // Remove old participant
   await deleteParticipant(pid);
-  const updated={id:pid,name:n};
-  state.players=state.players.map(x=>x.id===pid?updated:x);
+
+  // Add new participant with same id
+  const updated = { id: pid, name: n };
+  state.players = state.players.map(x => x.id === pid ? updated : x);
   await saveParticipant(updated);
-  render(); openModal();
+
+  render();
+  openModal(); // refresh modal
 }
 
 /* --- Scoring --- */
 async function inc(pid){
-  const c=active(); if(!c) return;
-  c.scores[pid]=(c.scores[pid]||0)+1;
-  c.events.push({pid,time:Date.now(),delta:+1});
-  await saveCompetition(c); render();
+  const c = active();
+  if(!c) return;
+  c.scores[pid] = (c.scores[pid] || 0) + 1;
+  c.events.push({ pid, time: Date.now(), delta: +1 });
+  await saveCompetition(c);
+  render();
 }
+
 async function dec(pid){
-  const c=active(); if(!c) return;
-  c.scores[pid]=Math.max(0,(c.scores[pid]||0)-1);
-  c.events.push({pid,time:Date.now(),delta:-1});
-  await saveCompetition(c); render();
+  const c = active();
+  if(!c) return;
+  c.scores[pid] = Math.max(0, (c.scores[pid]||0) - 1);
+  c.events.push({ pid, time: Date.now(), delta: -1 });
+  await saveCompetition(c);
+  render();
 }
 
 /* --- Chart --- */
 const BRAND_COLORS=["#009fdb","#002b45","#56c271","#f4a261","#e76f51"];
-function colorFor(pid,idx){
-  if(idx<BRAND_COLORS.length) return BRAND_COLORS[idx];
-  let h=0; for(let i=0;i<pid.length;i++) h=(h*31+pid.charCodeAt(i))%360;
-  return `hsl(${h} 55% 60%)`;
-}
-function buildDateLabels(c){
-  const arr=[]; let start=new Date(c.start+"T00:00:00"); let end=new Date();
-  const compEnd=new Date(c.end+"T23:59:59"); if(compEnd>end) end=compEnd;
-  for(let dt=new Date(start); dt<=end; dt.setDate(dt.getDate()+1)){ arr.push(dt.toISOString().slice(0,10)); }
+function colorFor(pid,idx){if(idx<BRAND_COLORS.length)return BRAND_COLORS[idx]; let h=0; for(let i=0;i<pid.length;i++)h=(h*31+pid.charCodeAt(i))%360; return `hsl(${h} 55% 60%)`;}
+function buildDateLabels(c) {
+  const arr = [];
+  let start = new Date(c.start + "T00:00:00");
+  let end = new Date(); // always go until today
+  const compEnd = new Date(c.end + "T23:59:59");
+  if (compEnd > end) end = compEnd;
+
+  for (let dt = new Date(start); dt <= end; dt.setDate(dt.getDate() + 1)) {
+    arr.push(dt.toISOString().slice(0, 10));
+  }
   return arr;
 }
+
 function buildChart(){
-  const c=active(); if(!c) return;
-  const ctx=document.getElementById("chart").getContext("2d");
-  const labels=buildDateLabels(c);
-  const datasets=state.players.map((p,idx)=>{
-    let score=0;
-    const data=labels.map(d=>{
-      const dayEnd=new Date(d+"T23:59:59").getTime();
-      score=c.events.filter(ev=>ev.pid===p.id && ev.time<=dayEnd).reduce((a,ev)=>a+(ev.delta||1),0);
+  const c = active();
+  if(!c) return;
+  const ctx = document.getElementById("chart").getContext("2d");
+
+  const labels = buildDateLabels(c);
+
+  const datasets = state.players.map((p,idx)=>{
+    let score = 0;
+    const data = labels.map(d=>{
+      const dayEnd = new Date(d+"T23:59:59").getTime();
+      // sum deltas instead of counting events
+      score = c.events
+        .filter(ev => ev.pid === p.id && ev.time <= dayEnd)
+        .reduce((acc,ev)=> acc + (ev.delta || 1), 0);
       return score;
     });
-    return {label:p.name,data,borderColor:colorFor(p.id,idx),borderWidth:2,tension:.25,pointRadius:0};
+    return {
+      label: p.name,
+      data,
+      borderColor: colorFor(p.id, idx),
+      borderWidth: 2,
+      tension: .25,
+      pointRadius: 0
+    };
   });
-  const maxScore=Math.max(1,...datasets.flatMap(ds=>ds.data));
+
+  const maxScore = Math.max(1,...datasets.flatMap(ds=>ds.data));
   if(chart) chart.destroy();
-  chart=new Chart(ctx,{type:"line",data:{labels:labels.map(fmtShort),datasets},options:{maintainAspectRatio:false,scales:{x:{ticks:{maxTicksLimit:8}},y:{beginAtZero:true,suggestedMax:maxScore+2}}}});
+  chart = new Chart(ctx,{
+    type:"line",
+    data:{ labels:labels.map(fmtShort), datasets },
+    options:{ maintainAspectRatio:false,
+      scales:{
+        x:{ ticks:{ maxTicksLimit:8 }},
+        y:{ beginAtZero:true, suggestedMax:maxScore+2 }
+      }
+    }
+  });
 }
 
 /* --- Render --- */
 function renderCompetitions(){
   const list=document.getElementById("competitions"); list.innerHTML="";
-  Object.values(state.competitions).sort((a,b)=>Number(b.id)-Number(a.id)).forEach(c=>{
-    const div=document.createElement("div");
-    div.className="competition"+(c.id===state.active?" active":"")+(c.ended?" finished":"");
-    div.innerHTML=`
-      <div class="compTitle">${c.name}${c.ended?" <span class='ended'>(Finished)</span>":""}</div>
-      <div class="compDates">${fmtShort(c.start)} – ${fmtShort(c.end)}</div>
-    `;
-    div.onclick=()=>switchComp(c.id);
-    list.appendChild(div);
-  });
+  Object.values(state.competitions)
+    .sort((a,b)=>Number(b.id)-Number(a.id))
+    .forEach(c=>{
+      const div=document.createElement("div");
+      div.className="competition"+(c.id===state.active?" active":"")+(c.ended?" finished":"");
+div.innerHTML = `
+  <div class="compTitle">${c.name}${c.ended ? " <span class='ended'>(Finished)</span>" : ""}</div>
+  <div class="compDates">${fmtShort(c.start)} – ${fmtShort(c.end)}</div>
+`;
+      div.onclick=()=>switchComp(c.id);
+      list.appendChild(div);
+    });
 }
 function render(){
   renderCompetitions();
-  const c=active(); if(!c) return;
-  document.getElementById("mainCompName").textContent=c.name+(c.ended?" (Finished)":"");
-  const dc=document.getElementById("drawerCompName"); if(dc) dc.textContent=c.name+(c.ended?" (Finished)":"");
+  const c=active(); if(!c)return;
+  document.getElementById("mainCompName").textContent = c.name + (c.ended ? " (Finished)" : ""); document.getElementById("drawerCompName").textContent = c.name + (c.ended ? " (Finished)" : "");
   document.getElementById("startDate").value=c.start; document.getElementById("endDate").value=c.end;
   document.getElementById("startDate").onchange=e=>{c.start=e.target.value; saveCompetition(c);};
   document.getElementById("endDate").onchange=e=>{c.end=e.target.value; saveCompetition(c);};
   const tbody=document.getElementById("leaderboard"); tbody.innerHTML="";
   state.players.map(p=>({id:p.id,name:p.name,score:c.scores[p.id]||0}))
-    .sort((a,b)=>b.score-a.score).forEach((p,i)=>{
-      const tr=document.createElement("tr");
+    .sort((a,b)=>b.score-a.score).forEach((p,i)=>{const tr=document.createElement("tr");
       tr.innerHTML=`<td>${i+1}</td><td>${p.name}</td><td><b>${p.score}</b></td>
-        <td class="scoreBtns">
-          <button class="btn primary" onclick="inc('${p.id}')">+1</button>
-          <button class="btn ghost small" onclick="dec('${p.id}')">-1</button>
-        </td>`;
-      tbody.appendChild(tr);
-    });
+      <td class="scoreBtns"><button class="btn primary" onclick="inc('${p.id}')">+1</button>
+      <button class="btn ghost small" onclick="dec('${p.id}')">-1</button></td>`;
+      tbody.appendChild(tr);});
   buildChart();
 }
 
 /* --- Modal --- */
-function openModal(){
-  const pl=document.getElementById("partList"); pl.innerHTML="";
-  state.players.forEach(p=>{
-    const row=document.createElement("div");
-    row.className="participantRow";
-    row.innerHTML=`<div>${p.name}</div>
-      <div class="row" style="display:flex;gap:8px">
-        <button class="btn ghost small" onclick="renamePlayer('${p.id}')">Rename</button>
-        <button class="btn ghost small" onclick="removePlayer('${p.id}')">Remove</button>
-      </div>`;
-    pl.appendChild(row);
-  });
-  document.getElementById("modal").style.display="flex";
-}
+function openModal(){const pl=document.getElementById("partList"); pl.innerHTML=""; state.players.forEach(p=>{const row=document.createElement("div"); row.className="participantRow"; row.innerHTML=`<div>${p.name}</div><div class="row"><button class="btn ghost small" onclick="renamePlayer('${p.id}')">Rename</button><button class="btn ghost small" onclick="removePlayer('${p.id}')">Remove</button></div>`; pl.appendChild(row);}); document.getElementById("modal").style.display="flex";}
 function closeModal(){document.getElementById("modal").style.display="none";}
 
 /* --- Winner/End --- */
-function drawWinner(){
-  const c=active(); const entries=[];
-  for(const [pid,score] of Object.entries(c.scores||{})){
-    for(let i=0;i<score;i++) entries.push(state.players.find(p=>p.id===pid)?.name);
-  }
-  if(!entries.length){alert("No points");return;}
-  alert("Winner: "+entries[Math.floor(Math.random()*entries.length)]);
-}
-function endNow(){
-  const c=active(); c.ended=true; c.end=new Date().toISOString().slice(0,10); saveCompetition(c);
-}
+function drawWinner(){const c=active(); const entries=[]; for(const [pid,score] of Object.entries(c.scores)){for(let i=0;i<score;i++)entries.push(state.players.find(p=>p.id===pid)?.name);} if(!entries.length){alert("No points");return;} alert("Winner: "+entries[Math.floor(Math.random()*entries.length)]);}
+function endNow(){const c=active(); c.ended=true; c.end=new Date().toISOString().slice(0,10); saveCompetition(c);}
 
 /* --- Events --- */
 document.getElementById("btnNewComp").onclick=newComp;
-document.getElementById("btnManage").onclick=()=>{
-  document.getElementById("sidebar").classList.remove("open");
+document.getElementById("btnManage").onclick = () => {
+  document.getElementById("sidebar").classList.remove("open"); // collapse sidebar
   openModal();
 };
 
 /* Desktop actions */
 document.getElementById("btnDraw").onclick=drawWinner;
 document.getElementById("btnEnd").onclick=endNow;
+
 /* Mobile actions */
 document.getElementById("btnDrawMobile").onclick=drawWinner;
 document.getElementById("btnEndMobile").onclick=endNow;
 
-/* Add participant */
-document.getElementById("btnAddPart").onclick=async ()=>{
-  const v=document.getElementById("newPart").value.trim();
-  if(v){
-    await addPlayer(v);
-    document.getElementById("newPart").value="";
+  /* Add Button actions */
+ document.getElementById("btnAddPart").onclick = async () => {
+  const v = document.getElementById("newPart").value.trim();
+  if (v) {
+    await addPlayer(v);                 // wait for save
+    document.getElementById("newPart").value = "";
     render();
-    openModal();
+    openModal();                        // refresh modal immediately
   }
 };
 
-/* Range buttons (UI only for now) */
-document.getElementById("rangeAll").onclick=()=>{chartRange="all";buildChart();};
-document.getElementById("range30").onclick=()=>{chartRange="30";buildChart();};
-document.getElementById("range7").onclick=()=>{chartRange="7";buildChart();};
+/* Range buttons (you can add logic if you filter events by range later) */
+document.getElementById("rangeAll").onclick=()=>{ chartRange="all"; buildChart(); };
+document.getElementById("range30").onclick=()=>{ chartRange="30"; buildChart(); };
+document.getElementById("range7").onclick=()=>{ chartRange="7"; buildChart(); };
 
-/* Drawer toggle (mobile) */
-const drawer=document.getElementById("sidebar");
-const handle=document.getElementById("drawerHandle");
-if(handle){
-  handle.addEventListener("click",(e)=>{e.stopPropagation();drawer.classList.toggle("open");});
-  document.addEventListener("click",(e)=>{ if(drawer.classList.contains("open") && !drawer.contains(e.target)){ drawer.classList.remove("open"); }});
-}
+/* --- Drawer handle toggle (mobile) --- */
+const drawer = document.getElementById("sidebar");
+const handle = document.getElementById("drawerHandle");
+handle.addEventListener("click", (e) => {
+  e.stopPropagation();
+  drawer.classList.toggle("open");
+});
+/* If you want tap-outside-to-close when open, uncomment below:*/
+document.addEventListener("click", (e)=>{
+  if (drawer.classList.contains("open") && !drawer.contains(e.target)) {
+    drawer.classList.remove("open");
+  }
+});
 
-/* Start */
-window.onload=()=>{ loadClubs(); };
+/* --- Start --- */
+window.onload = () => { loadClubs(); };
 </script>
 </body>
 </html>
