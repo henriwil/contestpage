@@ -528,22 +528,30 @@ async function load(){
   state.players = Array.isArray(data) ? data : (data.participants || []);
   render();
 }
-  async function loadParticipants() {
-  await load();
+ async function loadParticipants() {
+  // ✅ Just fetch and replace the list (no double pushing)
+  if (!state.activeClub) return;
+  const res = await fetch(`/.netlify/functions/?clubId=${state.activeClub}`);
+  const data = await res.json();
+  state.players = Array.isArray(data) ? data : (data.participants || []);
+  render();
 }
   
 async function saveParticipant(player) {
+  // ✅ Only send to backend, don’t also push manually
   await fetch(`/.netlify/functions/participants?clubId=${state.activeClub}`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(player)
   });
-  state.players.push(player); // immediately update UI
-  render();
+  await loadParticipants(); // re-fetch cleanly
 }
-async function deleteParticipant(id){
-  await fetch(`/.netlify/functions/participants?clubId=${state.activeClub}`,{
-    method:"DELETE", headers:{"Content-Type":"application/json"}, body:JSON.stringify({id})
+async function deleteParticipant(id) {
+  // ✅ Delete backend record, then refresh list
+  await fetch(`/.netlify/functions/participants?clubId=${state.activeClub}`, {
+    method: "DELETE",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ id })
   });
   await loadParticipants();
 }
@@ -568,15 +576,13 @@ const active=()=>state.competitions[state.active];
 async function addPlayer(name) {
   const id = Math.random().toString(36).slice(2);
   const player = { id, name };
-  state.players.push(player);
-  await saveParticipant(player);  // ⬅️ ensure backend is updated before continuing
+  await saveParticipant(player); // backend handles add + re-fetch
+  openModal(); // refresh modal view
 }
-async function removePlayer(pid){
-  state.players = state.players.filter(p=>p.id!==pid);
-  await deleteParticipant(pid);
-  for(const c of Object.values(state.competitions)){ delete c.scores[pid]; }
-  render();
-  openModal();  // 🔄 refresh modal list
+
+async function removePlayer(pid) {
+  await deleteParticipant(pid); // backend handles remove + re-fetch
+  openModal(); // refresh modal view
 }
 async function renamePlayer(pid){
   const p = state.players.find(p=>p.id===pid); if(!p) return;
