@@ -678,21 +678,39 @@ function buildChart(){
 }
 
 /* --- Render --- */
-function renderCompetitions(){
-  const list=document.getElementById("competitions"); list.innerHTML="";
-  Object.values(state.competitions)
-    .sort((a,b)=>Number(b.id)-Number(a.id))
-    .forEach(c=>{
-      const div=document.createElement("div");
-      div.className="competition"+(c.id===state.active?" active":"")+(c.ended?" finished":"");
-div.innerHTML = `
-  <div class="compTitle">${c.name}${c.ended ? " <span class='ended'>(Finished)</span>" : ""}</div>
-  <div class="compDates">${fmtShort(c.start)} – ${fmtShort(c.end)}</div>
-`;
-      div.onclick=()=>switchComp(c.id);
-      list.appendChild(div);
-    });
+function renderCompetitions() {
+  const list = document.getElementById("competitions");
+  list.innerHTML = "";
+
+  // Separate active and finished competitions
+  const comps = Object.values(state.competitions);
+  const activeComps = comps
+    .filter(c => !c.ended)
+    .sort((a, b) => Number(b.id) - Number(a.id));
+  const finishedComps = comps
+    .filter(c => c.ended)
+    .sort((a, b) => Number(b.id) - Number(a.id));
+
+  const ordered = [...activeComps, ...finishedComps];
+
+  // Render all
+  ordered.forEach(c => {
+    const div = document.createElement("div");
+    div.className =
+      "competition" +
+      (c.id === state.active ? " active" : "") +
+      (c.ended ? " finished" : "");
+    div.innerHTML = `
+      <div class="compTitle">
+        ${c.name}${c.ended ? " <span class='ended'>(Finished)</span>" : ""}
+      </div>
+      <div class="compDates">${fmtShort(c.start)} – ${fmtShort(c.end)}</div>
+    `;
+    div.onclick = () => switchComp(c.id);
+    list.appendChild(div);
+  });
 }
+  
 function render(){
   renderCompetitions();
   const c=active(); if(!c)return;
