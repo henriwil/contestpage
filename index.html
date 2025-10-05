@@ -65,12 +65,15 @@ body { display: grid; grid-template-columns: 320px 1fr; height: 100vh; }
 
 /* ===== Sidebar (desktop) ===== */
 #sidebar {
-  background: var(--sats-primary);
+ background: var(--sats-primary);
   color: #fff;
   padding: 20px;
   display: flex;
   flex-direction: column;
   gap: 14px;
+  height: 100vh; /* fill screen height */
+  box-sizing: border-box;
+  overflow: hidden; /* no scroll on the entire sidebar */
 }
 #sidebar h2 { color: #fff; }
 
@@ -110,18 +113,17 @@ body { display: grid; grid-template-columns: 320px 1fr; height: 100vh; }
 
 /* Competitions list */
 #compWrap {
-  flex: 1;
+   flex: 1;
   display: flex;
   flex-direction: column;
   min-height: 0;
 }
 #competitions {
-  flex: 1;
+ flex: 1;
   overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
   margin-top: 8px;
-  padding-right: 4px;
-  -webkit-overflow-scrolling: touch; /* ✅ smooth touch scroll on iPad */
-
+  padding-right: 6px;
 }
 .competition {
   padding: 10px 12px;
@@ -164,11 +166,13 @@ body { display: grid; grid-template-columns: 320px 1fr; height: 100vh; }
 #btnNewComp:hover { background: var(--sats-light); }
 
 #btnManage {
-  border: 2px solid #fff;
+ border: 2px solid #fff;
   color: #fff;
   background: transparent;
   margin-top: auto;
-  padding-top: 16px;
+  position: sticky;
+  bottom: 0;
+  z-index: 5;
 }
 #btnManage:hover { background: rgba(255,255,255,0.1); }
 
