@@ -78,8 +78,7 @@ body { display: grid; grid-template-columns: 320px 1fr; height: 100vh; }
 #sidebarInner {
   display: flex;
   flex-direction: column;
-  height: 100%;
-  overflow: hidden;
+  height: 100vh;
 }
 
 /* Club row */
@@ -113,7 +112,6 @@ body { display: grid; grid-template-columns: 320px 1fr; height: 100vh; }
   flex: 1;
   display: flex;
   flex-direction: column;
-  overflow: hidden;
   min-height: 0;
 }
 #competitions {
@@ -121,7 +119,8 @@ body { display: grid; grid-template-columns: 320px 1fr; height: 100vh; }
   overflow-y: auto;
   margin-top: 8px;
   padding-right: 4px;
-  scroll-behavior: smooth;
+  -webkit-overflow-scrolling: touch; /* ✅ smooth touch scroll on iPad */
+
 }
 .competition {
   padding: 10px 12px;
@@ -132,6 +131,7 @@ body { display: grid; grid-template-columns: 320px 1fr; height: 100vh; }
   cursor: pointer;
   color: var(--sats-text);
   line-height: 1.4;
+  
 }
 .competition.active {
   background: var(--sats-accent);
@@ -168,6 +168,7 @@ body { display: grid; grid-template-columns: 320px 1fr; height: 100vh; }
   background: transparent;
   margin-top: auto;
   padding-top: 16px;
+  border-top:2px;
 }
 #btnManage:hover { background: rgba(255,255,255,0.1); }
 
@@ -343,7 +344,7 @@ tbody tr:nth-child(odd) { background: #fafafa; }
 
   /* Expanded */
   #sidebar.open {
-    height: 75vh;
+    height: 100vh;
     overflow: visible;
     border-bottom-left-radius: 0;
     border-bottom-right-radius: 0;
@@ -364,7 +365,6 @@ tbody tr:nth-child(odd) { background: #fafafa; }
     position: sticky;
     bottom: 0;
     background: var(--sats-primary);
-    border-top: 1px solid rgba(255,255,255,0.2);
   }
 
   /* Hide inner content when collapsed */
