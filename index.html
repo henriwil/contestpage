@@ -12,15 +12,16 @@
 
 <style>
 :root {
-  --sats-primary: #002b45;   /* Mørk SATS-blå */
-  --sats-accent: #f15a29;    /* Oransje CTA */
-  --sats-light: #f7f7f7;     /* Lys seksjonsbakgrunn */
-  --sats-border: #e6e6e6;    /* Grå kantlinjer */
-  --sats-text: #0a1c2b;      /* Dyp blåsvart tekst */
-  --sats-muted: #667085;     /* Sekundær tekst */
+  --sats-primary: #002b45;
+  --sats-accent: #f15a29;
+  --sats-light: #f7f7f7;
+  --sats-border: #e6e6e6;
+  --sats-text: #0a1c2b;
+  --sats-muted: #667085;
   --radius: 10px;
 }
 
+/* Base layout & typography */
 html, body {
   height: 100%;
   margin: 0;
@@ -29,9 +30,11 @@ html, body {
   color: var(--sats-text);
   line-height: 1.4;
 }
-
-/* Headings */
-h1, h2, h3 { margin: 0; font-weight: 700; color: var(--sats-primary); }
+h1, h2, h3 {
+  margin: 0;
+  font-weight: 700;
+  color: var(--sats-primary);
+}
 h1 { font-size: 2rem; }
 h2 { font-size: 1.4rem; }
 h3 { font-size: 1.2rem; }
@@ -56,65 +59,124 @@ h3 { font-size: 1.2rem; }
 .btn.ghost:hover { background: var(--sats-primary); color: #fff; }
 .btn.small { padding: 8px 14px; font-size: 0.9rem; }
 
-/* Layout */
+/* ===== Layout ===== */
 body { display: grid; grid-template-columns: 320px 1fr; height: 100vh; }
 @media(max-width: 900px) { body { grid-template-columns: 1fr; } }
 
-/* Sidebar (desktop baseline) */
+/* ===== Sidebar (desktop) ===== */
 #sidebar {
-  background: var(--sats-primary);
+ background: var(--sats-primary);
   color: #fff;
   padding: 20px;
   display: flex;
   flex-direction: column;
   gap: 14px;
+  height: 100vh; /* fill screen height */
+  box-sizing: border-box;
+  overflow: hidden; /* no scroll on the entire sidebar */
 }
 #sidebar h2 { color: #fff; }
 
-/* Inner wrapper to hide on mobile collapse */
-#sidebarInner { display: contents; }
-
-/* Competitions: scrollable area with New button pinned above list */
-#compWrap {
-  flex: 1;
+/* Sidebar inner wrapper */
+#sidebarInner {
   display: flex;
   flex-direction: column;
+  height: 100%;
+  overflow: hidden;
+}
+
+/* Club row */
+.club-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
   gap: 10px;
-  overflow-y: auto;
+  margin-bottom: 16px; /* ✅ gives breathing room */
+}
+.club-row h2 { font-size: 1.1rem; color: #fff; }
+#clubSelect {
+  flex: 1;
+  max-width: 160px;
+  padding: 6px 8px;
+  border: 1px solid #fff;
+  border-radius: 6px;
+  background: rgba(255,255,255,0.1);
+  color: #fff;
+  font-weight: 600;
+  appearance: none;
+  font-size: medium;
+}
+#clubSelect option {
+  color: var(--sats-text);
+  background: #fff;
+}
+
+/* Competitions list */
+#compWrap {
+   flex: 1;
+  display: flex;
+  flex-direction: column;
   min-height: 0;
 }
 #competitions {
-  flex: 1;
+ flex: 1;
   overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  margin-top: 8px;
+  padding-right: 6px;
 }
 .competition {
-  background: #fff;
-  color: var(--sats-text);
-  border: 1px solid var(--sats-border);
-  border-radius: var(--radius);
   padding: 10px 12px;
+  margin: 6px 0;
+  border: 1px solid var(--sats-border);
+  border-radius: 12px;
+  background: #fff;
   cursor: pointer;
+  color: var(--sats-text);
+  line-height: 1.4;
+  
 }
-.competition.active { background: var(--sats-accent); color: #fff; border: none; }
-.competition.finished { background: var(--sats-light); color: var(--sats-muted); font-style: italic; }
+.competition.active {
+  background: var(--sats-accent);
+  color: #fff;
+  border-color: var(--sats-accent);
+}
+.competition.finished {
+  background: #f0f0f0;
+  color: #888;
+  border: 1px solid #ddd;
+  font-style: italic;
+}
+.compTitle { font-weight: 700; font-size: 1rem; }
+.compDates { font-size: 0.85rem; opacity: 0.9; margin-top: 2px; }
+.competition.active .compDates { opacity: 0.95; }
+.ended { font-weight: 500; font-style: italic; opacity: 0.9; }
 
-/* New competition: white */
+/* Buttons inside sidebar */
 #btnNewComp {
+  position: sticky;
+  top: 0;
+  z-index: 2;
   background: #fff;
   color: var(--sats-primary);
   border: 2px solid var(--sats-border);
+  border-radius: 12px;
+  margin-bottom: 10px;
 }
 #btnNewComp:hover { background: var(--sats-light); }
 
-/* Manage participants always visible style */
 #btnManage {
-  border: 2px solid #fff;
+ border: 2px solid #fff;
   color: #fff;
   background: transparent;
+  margin-top: auto;
+  position: sticky;
+  bottom: 0;
+  z-index: 5;
 }
 #btnManage:hover { background: rgba(255,255,255,0.1); }
 
-/* Main */
+/* ===== Main ===== */
 #main {
   padding: 30px;
   overflow: auto;
@@ -123,8 +185,6 @@ body { display: grid; grid-template-columns: 320px 1fr; height: 100vh; }
   gap: 20px;
   background: #fff;
 }
-
-/* Cards */
 .card {
   background: #fff;
   border: 1px solid var(--sats-border);
@@ -134,7 +194,7 @@ body { display: grid; grid-template-columns: 320px 1fr; height: 100vh; }
 }
 .card:hover { box-shadow: 0 6px 16px rgba(0,0,0,0.08); }
 
-/* Table */
+/* Tables */
 table { width: 100%; border-collapse: collapse; }
 thead th {
   padding: 12px 8px;
@@ -147,145 +207,180 @@ thead th {
 tbody td { padding: 12px 8px; border-bottom: 1px solid var(--sats-border); }
 tbody tr:nth-child(odd) { background: #fafafa; }
 
-/* Modal */
-#modal { position: fixed; inset: 0; background: rgba(0,0,0,.5); display: none; align-items: center; justify-content: center; }
-#modalContent { background: #fff; border-radius: var(--radius); padding: 24px; width: min(520px, 92vw); }
+/* ===== Modal ===== */
+#modal {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,.5);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  z-index: 2000;
+}
+#modalContent {
+  position: relative;
+  background: #fff;
+  border-radius: var(--radius);
+  padding: 24px;
+  width: min(520px, 92vw);
+  box-shadow: 0 8px 20px rgba(0,0,0,0.25);
+}
 .participantRow {
-  display: flex; justify-content: space-between; align-items: center;
-  padding: 12px; margin: 10px 0; border: 1px solid var(--sats-border); border-radius: var(--radius);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px;
+  margin: 10px 0;
+  border: 1px solid var(--sats-border);
+  border-radius: var(--radius);
 }
 .muted { color: var(--sats-muted); }
+.modal-close {
+  position: absolute;
+  top: 10px; right: 10px;
+  border: none;
+  background: transparent;
+  color: var(--sats-primary);
+  font-size: 1.1rem;
+  cursor: pointer;
+  border-radius: 6px;
+  padding: 6px 10px;
+}
+.modal-close:hover {
+  color: var(--sats-accent);
+  background: rgba(0,0,0,0.05);
+}
 
-/* Feedback button */
+/* ===== Feedback FAB ===== */
 .feedback-fab {
-  position: fixed; right: 20px; bottom: 20px; border-radius: 999px;
-  background: var(--sats-primary); color: #fff; padding: 12px 18px; font-weight: 700;
-  box-shadow: 0 6px 16px rgba(0,0,0,0.15); text-decoration: none;
+  position: fixed;
+  right: 20px; bottom: 20px;
+  border-radius: 999px;
+  background: #fff;
+  color: var(--sats-primary);
+  padding: 12px 18px;
+  font-weight: 700;
+  box-shadow: 0 6px 16px rgba(0,0,0,0.15);
+  text-decoration: none;
   transition: background .2s, transform .1s;
 }
-.feedback-fab:hover { background: #001a2e; transform: translateY(-2px); }
+.feedback-fab:hover { background: #001a2e; color: #fff; transform: translateY(-2px); }
 
-/* Leaderboard & Graph: 50/50 desktop; stacked mobile */
-/* --- Grid layout --- */
-.grid-2 { 
-  display: grid; 
-  gap: 20px; 
-  grid-template-columns: 1fr 1fr; 
-  align-items: stretch; 
+/* ===== Grid layout ===== */
+.grid-2 {
+  display: grid;
+  gap: 20px;
+  grid-template-columns: 1fr 1fr;
+  align-items: stretch;
 }
 .grid-2 > .card { height: 100%; }
-
-/* Mobile: stack and use full width */
 @media(max-width: 900px) {
-  .grid-2 {
-    grid-template-columns: 1fr; /* stack vertically */
-  }
+  .grid-2 { grid-template-columns: 1fr; }
   .grid-2 > .card {
-    width: 100%;      /* stretch to full screen width */
+    width: 100%;
     box-sizing: border-box;
   }
-  #main {
-    padding: 16px 10px; /* less side padding on mobile so cards look wide */
-  }
+  #main { padding: 16px 10px; }
 }
 
-/* Header */
+/* ===== Header & Dates ===== */
 .row.header-row {
-  display: flex; align-items: center; justify-content: space-between; gap: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
 }
 #compActions { display: flex; gap: 10px; }
-
-/* Dates row + mobile actions */
-.row.dates { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+.row.dates {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
 #mobileActions { display: none; }
 @media(max-width: 900px) {
   .row.header-row { flex-direction: column; align-items: flex-start; gap: 6px; }
-  #compActions { display: none; } /* move actions to dates row on mobile */
-  .row.dates { gap: 10px; width: 100%; justify-content: space-between; }
+  #compActions { display: none; }
+  .row.dates { width: 100%; justify-content: space-between; gap: 10px; }
   #mobileActions { display: flex; gap: 8px; width: 100%; }
   #mobileActions .btn { flex: 1; padding: 10px; font-size: 0.95rem; }
 }
 
-/* ===== Mobile Drawer-Handle Sidebar ===== */
-#drawerHandle { display: none; } /* hidden on desktop */
-
+/* ===== Mobile Drawer Sidebar ===== */
+#drawerHandle { display: none; }
 @media(max-width: 900px) {
-  /* Sidebar becomes a top drawer */
   #sidebar {
+    padding: 0px 20px 20 20px;
     position: fixed;
     top: 0; left: 0; right: 0;
-    background: var(--sats-primary); color: #fff;
+    background: var(--sats-primary);
+    color: #fff;
     box-shadow: 0 4px 14px rgba(0,0,0,0.16);
     border-bottom-left-radius: 16px;
     border-bottom-right-radius: 16px;
-    overflow: hidden;
     transition: height .28s ease;
     z-index: 1000;
-
-    /* collapsed height (just handle + tiny title area) */
-    height: 70px; 
-    /*padding: 0; /* remove internal padding, we wrap inside */
+    height: 70px;
+    overflow: hidden;
+  }
+   #sidebar:not(.open) {
+    padding-top: 0;
+    padding-bottom: 0;
   }
 
-  /* Handle strip */
- #drawerHandle {
+  /* Drawer handle */
+  #drawerHandle {
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    height: 80px; /* a bit taller to fit text + handle */
-    background: var(--sats-primary);   /* 🔵 SATS blue background */
+    height: 80px;
+    background: var(--sats-primary);
     border-bottom-left-radius: 16px;
     border-bottom-right-radius: 16px;
-    color: #fff;  /* default text color white */
+    color: #fff;
   }
-
   #drawerHandle::after {
     content: "";
-    margin-top: 8px; /* space below text */
+    margin-top: 8px;
     width: 44px;
     height: 5px;
     border-radius: 3px;
-    background: #fff; /* white grip bar for contrast */
+    background: #fff;
   }
+  #drawerTitle { margin-top: 6px; font-weight: 700; font-size: 0.9rem; }
+  #drawerCompName { margin-top: 2px; font-weight: 600; color: #ccefff; }
 
-  #drawerTitle {
-    margin-top: 6px;
-    font-weight: 700;
-    font-size: 0.9rem;
-    color: #fff; /* ensure text is white on blue */
-  }
-
-  #drawerCompName {
-    margin-top: 2px;
-    font-size: 0.85rem;
-    font-weight: 600;
-    color: #ccefff; /* lighter blue/white for the competition name */
-  }
-
-  
-
-  /* The actual sidebar content container (hidden when collapsed) */
-  #sidebarInner {
-    padding: 16px 20px 20px;
-    display: none; /* hidden collapsed */
-  }
-
-  /* Open state: reveal content and grow height */
+  /* Expanded */
   #sidebar.open {
     height: 75vh;
+    overflow: visible;
     border-bottom-left-radius: 0;
     border-bottom-right-radius: 0;
   }
-  #sidebar.open #sidebarInner { display: block; }
+  #sidebar.open #sidebarInner {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    overflow: hidden;
+  }
+  #sidebar.open #competitions {
+    flex: 1;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    max-height: calc(75vh - 240px);
+  }
+  #btnManage {
+    position: sticky;
+    bottom: 0;
+    background: var(--sats-primary);
+  }
 
-  /* Hide desktop look headings when collapsed */
+  /* Hide inner content when collapsed */
   #sidebar:not(.open) h2,
   #sidebar:not(.open) select,
   #sidebar:not(.open) #compWrap,
   #sidebar:not(.open) #btnManage { display: none; }
-
-  
 }
 </style>
 </head>
@@ -295,13 +390,15 @@ tbody tr:nth-child(odd) { background: #fafafa; }
 <!-- Sidebar with drawer handle -->
 <aside id="sidebar">
   <div id="drawerHandle">
-    <div id="drawerTitle">Change competition</div>
-    <div id="drawerCompName"><span id="compName">No competition</span></div>
+    <div id="drawerTitle">Selected competition</div>
+    <div id="drawerCompName">No competition</div>
   </div>
 
   <div id="sidebarInner">
-    <h2>Club</h2>
-    <select id="clubSelect"></select>
+   <div class="club-row">
+  <h2>Club</h2>
+  <select id="clubSelect"></select>
+</div>
 
     <h2>Competitions</h2>
     <div id="compWrap">
@@ -315,7 +412,7 @@ tbody tr:nth-child(odd) { background: #fafafa; }
 
 <main id="main">
   <div class="row header-row">
-    <h1 id="compName">No competition</h1>
+   <h1 id="mainCompName">No competition</h1>
     <!-- Desktop actions -->
     <div id="compActions">
       <button class="btn ghost" id="btnEnd">End now</button>
@@ -358,12 +455,13 @@ tbody tr:nth-child(odd) { background: #fafafa; }
 <!-- Modal -->
 <div id="modal">
   <div id="modalContent">
-    <div class="row" style="justify-content:space-between">
-      <h3>Participants (club specific)</h3>
-      <button class="btn ghost small" onclick="closeModal()">Close</button>
-    </div>
+    <button class="btn ghost small modal-close" onclick="closeModal()">✕</button> <!-- moved out, top-right -->
+    <h3>Participants (club specific)</h3>
     <div id="partList"></div>
-    <div class="row"><input id="newPart" placeholder="New participant name" style="flex:1"/><button class="btn primary" id="btnAddPart">Add</button></div>
+    <div class="row">
+      <input id="newPart" placeholder="New participant name" style="flex:1"/>
+      <button class="btn primary" id="btnAddPart">Add</button>
+    </div>
   </div>
 </div>
 
@@ -423,13 +521,17 @@ async function saveCompetition(comp){
   await loadCompetitions();
 }
 
-async function loadParticipants(){
+async function load(){
   if (!state.activeClub) return;
-  const res = await fetch(`/.netlify/functions/participants?clubId=${state.activeClub}`);
+  const res = await fetch(`/.netlify/functions/?clubId=${state.activeClub}`);
   const data = await res.json();
   state.players = Array.isArray(data) ? data : (data.participants || []);
   render();
 }
+async function loadParticipants() {
+  await load();
+}
+  
 async function saveParticipant(player){
   await fetch(`/.netlify/functions/participants?clubId=${state.activeClub}`,{
     method:"POST", headers:{"Content-Type":"application/json"}, body:JSON.stringify(player)
@@ -463,30 +565,40 @@ const active=()=>state.competitions[state.active];
 async function addPlayer(name) {
   const id = Math.random().toString(36).slice(2);
   const player = { id, name };
-  state.players.push(player);
-  await saveParticipant(player);  // ⬅️ ensure backend is updated before continuing
-}
-async function removePlayer(pid){
-  state.players = state.players.filter(p=>p.id!==pid);
-  await deleteParticipant(pid);
-  for(const c of Object.values(state.competitions)){ delete c.scores[pid]; }
+  state.players.push(player);  // ✅ optimistic local update
+  await fetch(`/.netlify/functions/participants?clubId=${state.activeClub}`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(player)
+  });
   render();
-  openModal();  // 🔄 refresh modal list
+  openModal(); // ✅ immediately update UI
 }
-async function renamePlayer(pid){
-  const p = state.players.find(p=>p.id===pid); if(!p) return;
-  const n = prompt("New name:", p.name); if(!n) return;
 
-  // Remove old participant
-  await deleteParticipant(pid);
-
-  // Add new participant with same id
-  const updated = { id: pid, name: n };
-  state.players = state.players.map(x => x.id === pid ? updated : x);
-  await saveParticipant(updated);
-
+async function removePlayer(pid) {
+  state.players = state.players.filter(p => p.id !== pid);
+  await fetch(`/.netlify/functions/participants?clubId=${state.activeClub}`, {
+    method: "DELETE",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ id: pid })
+  });
+  for (const c of Object.values(state.competitions)) delete c.scores[pid];
   render();
-  openModal(); // refresh modal
+  openModal();
+}
+async function renamePlayer(pid) {
+  const p = state.players.find(p => p.id === pid);
+  if (!p) return;
+  const n = prompt("New name:", p.name);
+  if (!n) return;
+  p.name = n;
+  await fetch(`/.netlify/functions/participants?clubId=${state.activeClub}`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(p)
+  });
+  render();
+  openModal();
 }
 
 /* --- Scoring --- */
@@ -566,22 +678,43 @@ function buildChart(){
 }
 
 /* --- Render --- */
-function renderCompetitions(){
-  const list=document.getElementById("competitions"); list.innerHTML="";
-  Object.values(state.competitions)
-    .sort((a,b)=>Number(b.id)-Number(a.id))
-    .forEach(c=>{
-      const div=document.createElement("div");
-      div.className="competition"+(c.id===state.active?" active":"")+(c.ended?" finished":"");
-      div.textContent=`${c.name} ${fmtShort(c.start)}–${fmtShort(c.end)}${c.ended?" (Finished)":""}`;
-      div.onclick=()=>switchComp(c.id);
-      list.appendChild(div);
-    });
+function renderCompetitions() {
+  const list = document.getElementById("competitions");
+  list.innerHTML = "";
+
+  // Separate active and finished competitions
+  const comps = Object.values(state.competitions);
+  const activeComps = comps
+    .filter(c => !c.ended)
+    .sort((a, b) => Number(b.id) - Number(a.id));
+  const finishedComps = comps
+    .filter(c => c.ended)
+    .sort((a, b) => Number(b.id) - Number(a.id));
+
+  const ordered = [...activeComps, ...finishedComps];
+
+  // Render all
+  ordered.forEach(c => {
+    const div = document.createElement("div");
+    div.className =
+      "competition" +
+      (c.id === state.active ? " active" : "") +
+      (c.ended ? " finished" : "");
+    div.innerHTML = `
+      <div class="compTitle">
+        ${c.name}${c.ended ? " <span class='ended'>(Finished)</span>" : ""}
+      </div>
+      <div class="compDates">${fmtShort(c.start)} – ${fmtShort(c.end)}</div>
+    `;
+    div.onclick = () => switchComp(c.id);
+    list.appendChild(div);
+  });
 }
+  
 function render(){
   renderCompetitions();
   const c=active(); if(!c)return;
-  document.getElementById("compName").textContent=c.name+(c.ended?" (Finished)":"");
+  document.getElementById("mainCompName").textContent = c.name + (c.ended ? " (Finished)" : ""); document.getElementById("drawerCompName").textContent = c.name + (c.ended ? " (Finished)" : "");
   document.getElementById("startDate").value=c.start; document.getElementById("endDate").value=c.end;
   document.getElementById("startDate").onchange=e=>{c.start=e.target.value; saveCompetition(c);};
   document.getElementById("endDate").onchange=e=>{c.end=e.target.value; saveCompetition(c);};
@@ -621,12 +754,9 @@ document.getElementById("btnEndMobile").onclick=endNow;
   /* Add Button actions */
  document.getElementById("btnAddPart").onclick = async () => {
   const v = document.getElementById("newPart").value.trim();
-  if (v) {
-    await addPlayer(v);                 // wait for save
-    document.getElementById("newPart").value = "";
-    render();
-    openModal();                        // refresh modal immediately
-  }
+  if (!v) return;
+  await addPlayer(v);
+  document.getElementById("newPart").value = "";
 };
 
 /* Range buttons (you can add logic if you filter events by range later) */
