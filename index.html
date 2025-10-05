@@ -78,7 +78,8 @@ body { display: grid; grid-template-columns: 320px 1fr; height: 100vh; }
 #sidebarInner {
   display: flex;
   flex-direction: column;
-  height: 100vh;
+  height: 100%;
+  overflow: hidden;
 }
 
 /* Club row */
@@ -344,7 +345,7 @@ tbody tr:nth-child(odd) { background: #fafafa; }
 
   /* Expanded */
   #sidebar.open {
-    height: 100vh;
+    height: 75vh;
     overflow: visible;
     border-bottom-left-radius: 0;
     border-bottom-right-radius: 0;
