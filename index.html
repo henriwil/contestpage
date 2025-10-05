@@ -73,9 +73,10 @@ body { display: grid; grid-template-columns: 320px 1fr; height: 100vh; }
 
 /* Inner wrapper to hide on mobile collapse */
 #sidebarInner { 
- display: flex;
+   display: flex;
   flex-direction: column;
   height: 100%;
+  overflow: hidden; 
 }
 
   /*Clubs*/
@@ -115,7 +116,7 @@ body { display: grid; grid-template-columns: 320px 1fr; height: 100vh; }
   display: flex;
   flex-direction: column;
   gap: 10px;
-  overflow-y: auto;
+  overflow-y: hidden;
   min-height: 0;
 }
   
@@ -125,6 +126,7 @@ body { display: grid; grid-template-columns: 320px 1fr; height: 100vh; }
   overflow-y: auto;
   margin-top: 8px;
   padding-right: 4px; /* prevent scrollbar overlap */
+  scroll-behavior: smooth;
 }
 .competition {
   padding: 10px 12px;
@@ -188,6 +190,9 @@ body { display: grid; grid-template-columns: 320px 1fr; height: 100vh; }
   border: 2px solid #fff;
   color: #fff;
   background: transparent;
+  margin-top: auto;
+  border-top: 1px solid rgba(255,255,255,0.2);
+  padding-top: 16px;
 }
 #btnManage:hover { background: rgba(255,255,255,0.1); }
 
