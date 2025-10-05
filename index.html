@@ -528,30 +528,21 @@ async function load(){
   state.players = Array.isArray(data) ? data : (data.participants || []);
   render();
 }
- async function loadParticipants() {
-  if (!state.activeClub) return;
-  const res = await fetch(`/.netlify/functions/?clubId=${state.activeClub}`);
-  const data = await res.json();
-  state.players = Array.isArray(data) ? data : (data.participants || []);
+async function loadParticipants() {
+  await load();
 }
   
-async function saveParticipant(player) {
-  await fetch(`/.netlify/functions/participants?clubId=${state.activeClub}`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(player)
+async function saveParticipant(player){
+  await fetch(`/.netlify/functions/participants?clubId=${state.activeClub}`,{
+    method:"POST", headers:{"Content-Type":"application/json"}, body:JSON.stringify(player)
   });
   await loadParticipants();
-  render();
 }
-async function deleteParticipant(id) {
-  await fetch(`/.netlify/functions/participants?clubId=${state.activeClub}`, {
-    method: "DELETE",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ id })
+async function deleteParticipant(id){
+  await fetch(`/.netlify/functions/participants?clubId=${state.activeClub}`,{
+    method:"DELETE", headers:{"Content-Type":"application/json"}, body:JSON.stringify({id})
   });
   await loadParticipants();
-  render();
 }
 
 /* --- Competitions --- */
@@ -574,13 +565,15 @@ const active=()=>state.competitions[state.active];
 async function addPlayer(name) {
   const id = Math.random().toString(36).slice(2);
   const player = { id, name };
-  await saveParticipant(player);      // backend save + re-fetch
-  openModal();                        // reopen refreshed modal
+  state.players.push(player);
+  await saveParticipant(player);  // ⬅️ ensure backend is updated before continuing
 }
-
-async function removePlayer(pid) {
-  await deleteParticipant(pid);       // backend delete + re-fetch
-  openModal();                        // reopen refreshed modal
+async function removePlayer(pid){
+  state.players = state.players.filter(p=>p.id!==pid);
+  await deleteParticipant(pid);
+  for(const c of Object.values(state.competitions)){ delete c.scores[pid]; }
+  render();
+  openModal();  // 🔄 refresh modal list
 }
 async function renamePlayer(pid){
   const p = state.players.find(p=>p.id===pid); if(!p) return;
@@ -765,3 +758,6 @@ window.onload = () => { loadClubs(); };
 </script>
 </body>
 </html>
+
+
+now add button participant does not do anything
