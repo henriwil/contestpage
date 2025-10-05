@@ -72,7 +72,11 @@ body { display: grid; grid-template-columns: 320px 1fr; height: 100vh; }
 #sidebar h2 { color: #fff; }
 
 /* Inner wrapper to hide on mobile collapse */
-#sidebarInner { display: contents; }
+#sidebarInner { 
+ display: flex;
+  flex-direction: column;
+  height: 100%;
+}
 
   /*Clubs*/
   .club-row {
@@ -114,9 +118,13 @@ body { display: grid; grid-template-columns: 320px 1fr; height: 100vh; }
   overflow-y: auto;
   min-height: 0;
 }
+  
+/* Make competition list scrollable */
 #competitions {
   flex: 1;
   overflow-y: auto;
+  margin-top: 8px;
+  padding-right: 4px; /* prevent scrollbar overlap */
 }
 .competition {
   padding: 10px 12px;
@@ -163,9 +171,14 @@ body { display: grid; grid-template-columns: 320px 1fr; height: 100vh; }
 }
 /* New competition: white */
 #btnNewComp {
+  position: sticky;
+  top: 0;
+  z-index: 2;
   background: #fff;
   color: var(--sats-primary);
   border: 2px solid var(--sats-border);
+  border-radius: 12px;
+  margin-bottom: 10px;
 }
 #btnNewComp:hover { background: var(--sats-light); }
 
