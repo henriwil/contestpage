@@ -528,11 +528,18 @@ async function load(){
   state.players = Array.isArray(data) ? data : (data.participants || []);
   render();
 }
-async function saveParticipant(player){
-  await fetch(`/.netlify/functions/participants?clubId=${state.activeClub}`,{
-    method:"POST", headers:{"Content-Type":"application/json"}, body:JSON.stringify(player)
+  async function loadParticipants() {
+  await load();
+}
+  
+async function saveParticipant(player) {
+  await fetch(`/.netlify/functions/participants?clubId=${state.activeClub}`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(player)
   });
-  await loadParticipants();
+  state.players.push(player); // immediately update UI
+  render();
 }
 async function deleteParticipant(id){
   await fetch(`/.netlify/functions/participants?clubId=${state.activeClub}`,{
