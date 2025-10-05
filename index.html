@@ -565,30 +565,40 @@ const active=()=>state.competitions[state.active];
 async function addPlayer(name) {
   const id = Math.random().toString(36).slice(2);
   const player = { id, name };
-  state.players.push(player);
-  await saveParticipant(player);  // ⬅️ ensure backend is updated before continuing
-}
-async function removePlayer(pid){
-  state.players = state.players.filter(p=>p.id!==pid);
-  await deleteParticipant(pid);
-  for(const c of Object.values(state.competitions)){ delete c.scores[pid]; }
+  state.players.push(player);  // ✅ optimistic local update
+  await fetch(`/.netlify/functions/participants?clubId=${state.activeClub}`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(player)
+  });
   render();
-  openModal();  // 🔄 refresh modal list
+  openModal(); // ✅ immediately update UI
 }
-async function renamePlayer(pid){
-  const p = state.players.find(p=>p.id===pid); if(!p) return;
-  const n = prompt("New name:", p.name); if(!n) return;
 
-  // Remove old participant
-  await deleteParticipant(pid);
-
-  // Add new participant with same id
-  const updated = { id: pid, name: n };
-  state.players = state.players.map(x => x.id === pid ? updated : x);
-  await saveParticipant(updated);
-
+async function removePlayer(pid) {
+  state.players = state.players.filter(p => p.id !== pid);
+  await fetch(`/.netlify/functions/participants?clubId=${state.activeClub}`, {
+    method: "DELETE",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ id: pid })
+  });
+  for (const c of Object.values(state.competitions)) delete c.scores[pid];
   render();
-  openModal(); // refresh modal
+  openModal();
+}
+async function renamePlayer(pid) {
+  const p = state.players.find(p => p.id === pid);
+  if (!p) return;
+  const n = prompt("New name:", p.name);
+  if (!n) return;
+  p.name = n;
+  await fetch(`/.netlify/functions/participants?clubId=${state.activeClub}`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(p)
+  });
+  render();
+  openModal();
 }
 
 /* --- Scoring --- */
@@ -726,12 +736,9 @@ document.getElementById("btnEndMobile").onclick=endNow;
   /* Add Button actions */
  document.getElementById("btnAddPart").onclick = async () => {
   const v = document.getElementById("newPart").value.trim();
-  if (v) {
-    await addPlayer(v);                 // wait for save
-    document.getElementById("newPart").value = "";
-    render();
-    openModal();                        // refresh modal immediately
-  }
+  if (!v) return;
+  await addPlayer(v);
+  document.getElementById("newPart").value = "";
 };
 
 /* Range buttons (you can add logic if you filter events by range later) */
