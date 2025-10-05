@@ -74,6 +74,37 @@ body { display: grid; grid-template-columns: 320px 1fr; height: 100vh; }
 /* Inner wrapper to hide on mobile collapse */
 #sidebarInner { display: contents; }
 
+  /*Clubs*/
+  .club-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.club-row h2 {
+  margin: 0;
+  font-size: 1.1rem;
+  color: #fff; /* stays readable on blue background */
+}
+
+#clubSelect {
+  flex: 1;
+  max-width: 160px;
+  padding: 6px 8px;
+  border: 1px solid #fff;
+  border-radius: 6px;
+  background: rgba(255,255,255,0.1);
+  color: #fff;
+  font-weight: 600;
+  appearance: none;
+}
+
+#clubSelect option {
+  color: var(--sats-text); /* dropdown text stays readable */
+  background: #fff;
+}
+
 /* Competitions: scrollable area with New button pinned above list */
 #compWrap {
   flex: 1;
@@ -148,13 +179,58 @@ tbody td { padding: 12px 8px; border-bottom: 1px solid var(--sats-border); }
 tbody tr:nth-child(odd) { background: #fafafa; }
 
 /* Modal */
-#modal { position: fixed; inset: 0; background: rgba(0,0,0,.5); display: none; align-items: center; justify-content: center; }
-#modalContent { background: #fff; border-radius: var(--radius); padding: 24px; width: min(520px, 92vw); }
-.participantRow {
-  display: flex; justify-content: space-between; align-items: center;
-  padding: 12px; margin: 10px 0; border: 1px solid var(--sats-border); border-radius: var(--radius);
+#modal {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,.5);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  z-index: 2000; /* optional: ensure it stays above sidebar */
 }
-.muted { color: var(--sats-muted); }
+
+#modalContent {
+  position: relative; /* allow positioning the close button */
+  background: #fff;
+  border-radius: var(--radius);
+  padding: 24px;
+  width: min(520px, 92vw);
+  box-shadow: 0 8px 20px rgba(0,0,0,0.25);
+}
+
+.participantRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px;
+  margin: 10px 0;
+  border: 1px solid var(--sats-border);
+  border-radius: var(--radius);
+}
+
+.muted {
+  color: var(--sats-muted);
+}
+
+/* Close button top-right */
+.modal-close {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  padding: 6px 10px;
+  border: none;
+  background: transparent;
+  color: var(--sats-primary);
+  font-size: 1.1rem;
+  line-height: 1;
+  cursor: pointer;
+  border-radius: 6px;
+}
+
+.modal-close:hover {
+  color: var(--sats-accent);
+  background: rgba(0,0,0,0.05);
+}
 
 /* Feedback button */
 .feedback-fab {
@@ -165,6 +241,11 @@ tbody tr:nth-child(odd) { background: #fafafa; }
 }
 .feedback-fab:hover { background: #001a2e; transform: translateY(-2px); }
 
+/*club*/
+#clubSelect{
+  font-size:medium;
+}
+  
 /* Leaderboard & Graph: 50/50 desktop; stacked mobile */
 /* --- Grid layout --- */
 .grid-2 { 
@@ -223,7 +304,7 @@ tbody tr:nth-child(odd) { background: #fafafa; }
     z-index: 1000;
 
     /* collapsed height (just handle + tiny title area) */
-    height: 70px; 
+    height: 60px; 
     /*padding: 0; /* remove internal padding, we wrap inside */
   }
 
@@ -258,7 +339,6 @@ tbody tr:nth-child(odd) { background: #fafafa; }
 
   #drawerCompName {
     margin-top: 2px;
-    font-size: 0.85rem;
     font-weight: 600;
     color: #ccefff; /* lighter blue/white for the competition name */
   }
@@ -300,8 +380,10 @@ tbody tr:nth-child(odd) { background: #fafafa; }
   </div>
 
   <div id="sidebarInner">
-    <h2>Club</h2>
-    <select id="clubSelect"></select>
+   <div class="club-row">
+  <h2>Club</h2>
+  <select id="clubSelect"></select>
+</div>
 
     <h2>Competitions</h2>
     <div id="compWrap">
@@ -358,12 +440,13 @@ tbody tr:nth-child(odd) { background: #fafafa; }
 <!-- Modal -->
 <div id="modal">
   <div id="modalContent">
-    <div class="row" style="justify-content:space-between">
-      <h3>Participants (club specific)</h3>
-      <button class="btn ghost small" onclick="closeModal()">Close</button>
-    </div>
+    <button class="btn ghost small modal-close" onclick="closeModal()">✕</button> <!-- moved out, top-right -->
+    <h3>Participants (club specific)</h3>
     <div id="partList"></div>
-    <div class="row"><input id="newPart" placeholder="New participant name" style="flex:1"/><button class="btn primary" id="btnAddPart">Add</button></div>
+    <div class="row">
+      <input id="newPart" placeholder="New participant name" style="flex:1"/>
+      <button class="btn primary" id="btnAddPart">Add</button>
+    </div>
   </div>
 </div>
 
@@ -423,9 +506,9 @@ async function saveCompetition(comp){
   await loadCompetitions();
 }
 
-async function loadParticipants(){
+async function load(){
   if (!state.activeClub) return;
-  const res = await fetch(`/.netlify/functions/participants?clubId=${state.activeClub}`);
+  const res = await fetch(`/.netlify/functions/?clubId=${state.activeClub}`);
   const data = await res.json();
   state.players = Array.isArray(data) ? data : (data.participants || []);
   render();
