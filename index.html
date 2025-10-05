@@ -119,17 +119,48 @@ body { display: grid; grid-template-columns: 320px 1fr; height: 100vh; }
   overflow-y: auto;
 }
 .competition {
-  background: #fff;
-  color: var(--sats-text);
-  border: 1px solid var(--sats-border);
-  border-radius: var(--radius);
   padding: 10px 12px;
+  margin: 6px 0;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: #fff;
   cursor: pointer;
-  margin-bottom:2px;
+  line-height: 1.4;
 }
-.competition.active { background: var(--sats-accent); color: #fff; border: none; }
-.competition.finished { background: var(--sats-light); color: var(--sats-muted); font-style: italic; }
 
+.competition.active {
+  background: #f15a24; /* SATS orange */
+  color: #fff;
+  border-color: #f15a24;
+}
+
+.competition.finished {
+  background: #f0f0f0;
+  color: #888;
+  border: 1px solid #ddd;
+  font-style: italic;
+}
+
+.compTitle {
+  font-weight: 700;
+  font-size: 1rem;
+}
+
+.compDates {
+  font-size: 0.85rem;
+  opacity: 0.9;
+  margin-top: 2px;
+}
+
+.competition.active .compDates {
+  opacity: 0.95;
+}
+
+.ended {
+  font-weight: 500;
+  font-style: italic;
+  opacity: 0.9;
+}
 /* New competition: white */
 #btnNewComp {
   background: #fff;
