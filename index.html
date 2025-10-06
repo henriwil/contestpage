@@ -111,6 +111,23 @@ body { display: grid; grid-template-columns: 320px 1fr; height: 100vh; }
   background: #fff;
 }
 
+#totalScoreBadge {
+  background: var(--sats-accent);
+  color: #fff;
+  font-weight: 700;
+  font-size: 1.2rem;
+  padding: 10px 18px;
+  border-radius: 999px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.2s ease;
+}
+#totalScoreBadge:hover {
+  transform: scale(1.08);
+}
+
 /* Competitions list */
 #compWrap {
    flex: 1;
@@ -412,7 +429,10 @@ tbody tr:nth-child(odd) { background: #fafafa; }
 
 <main id="main">
   <div class="row header-row">
-   <h1 id="mainCompName">No competition</h1>
+   <div class="row header-row">
+  <h1 id="mainCompName">No competition</h1>
+  <div id="totalScoreBadge">0</div>
+</div>
     <!-- Desktop actions -->
     <div id="compActions">
       <button class="btn ghost" id="btnEnd">End now</button>
@@ -675,6 +695,10 @@ function buildChart(){
       }
     }
   });
+    // 🔹 Calculate and display total score
+  const total = Object.values(c.scores || {}).reduce((a,b)=>a+b,0);
+  const badge = document.getElementById("totalScoreBadge");
+  if (badge) badge.textContent = total;
 }
 
 /* --- Render --- */
