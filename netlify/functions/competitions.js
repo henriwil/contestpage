@@ -29,6 +29,17 @@ export async function handler(event) {
 
       return { statusCode: 200, body: JSON.stringify({ ok: true, competition: body }) };
     }
+      // ✅ NY DEL: håndter sletting
+  if (event.httpMethod === "DELETE") {
+    try {
+      const { id } = JSON.parse(event.body);
+      if (!id) return { statusCode: 400, body: "Missing id" };
+      await store.delete(id);
+      return { statusCode: 200, body: JSON.stringify({ ok: true }) };
+    } catch (err) {
+      return { statusCode: 500, body: "Error deleting: " + err.message };
+    }
+  }
 
     return { statusCode: 405, body: JSON.stringify({ error: "Method not allowed" }) };
   } catch (err) {
