@@ -634,7 +634,14 @@ async function inc(pid){
 async function dec(pid){
   const c = active();
   if(!c) return;
-  c.scores[pid] = Math.max(0, (c.scores[pid]||0) - 1);
+
+  const current = c.scores[pid] || 0;
+  if (current <= 0) {
+    alert("Score can't go below zero 👀");
+    return;
+  }
+
+  c.scores[pid] = current - 1;
   c.events.push({ pid, time: Date.now(), delta: -1 });
   await saveCompetition(c);
   render();
