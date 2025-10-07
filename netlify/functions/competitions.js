@@ -29,22 +29,30 @@ export async function handler(event) {
 
       return { statusCode: 200, body: JSON.stringify({ ok: true, competition: body }) };
     }
+    
       // ✅ NY DEL: håndter sletting
   if (event.httpMethod === "DELETE") {
   try {
-    const { id } = JSON.parse(event.body);
+    const { id } = JSON.parse(event.body || "{}");
     if (!id) return { statusCode: 400, body: "Missing id" };
 
     console.log("🗑️ Deleting competition:", id);
-    const store = await blobs("competitions");
-    const exists = await store.get(id);
 
-    if (!exists) {
+    // Load full list
+    let all = (await store.get("list", { type: "json" })) || {};
+
+    if (!all[id]) {
       return { statusCode: 404, body: "Competition not found: " + id };
     }
 
-    await store.delete(id);
-    return { statusCode: 200, body: JSON.stringify({ ok: true, deleted: id }) };
+    // Delete from list
+    delete all[id];
+    await store.setJSON("list", all);
+
+    return {
+      statusCode: 200,
+      body: JSON.stringify({ ok: true, deleted: id }),
+    };
   } catch (err) {
     console.error("Delete error:", err);
     return { statusCode: 500, body: "Error deleting: " + err.message };
