@@ -31,15 +31,25 @@ export async function handler(event) {
     }
       // ✅ NY DEL: håndter sletting
   if (event.httpMethod === "DELETE") {
-    try {
-      const { id } = JSON.parse(event.body);
-      if (!id) return { statusCode: 400, body: "Missing id" };
-      await store.delete(id);
-      return { statusCode: 200, body: JSON.stringify({ ok: true }) };
-    } catch (err) {
-      return { statusCode: 500, body: "Error deleting: " + err.message };
+  try {
+    const { id } = JSON.parse(event.body);
+    if (!id) return { statusCode: 400, body: "Missing id" };
+
+    console.log("🗑️ Deleting competition:", id);
+    const store = await blobs("competitions");
+    const exists = await store.get(id);
+
+    if (!exists) {
+      return { statusCode: 404, body: "Competition not found: " + id };
     }
+
+    await store.delete(id);
+    return { statusCode: 200, body: JSON.stringify({ ok: true, deleted: id }) };
+  } catch (err) {
+    console.error("Delete error:", err);
+    return { statusCode: 500, body: "Error deleting: " + err.message };
   }
+}
 
     return { statusCode: 405, body: JSON.stringify({ error: "Method not allowed" }) };
   } catch (err) {
