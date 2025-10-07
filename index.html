@@ -111,6 +111,25 @@ body { display: grid; grid-template-columns: 320px 1fr; height: 100vh; }
   background: #fff;
 }
 
+#totalScoreBadge {
+  margin-top: 14px;
+  display: inline-block;
+  background: var(--sats-accent);
+  color: #fff;
+  padding: 8px 16px;
+  border-radius: 999px;
+  font-weight: 700;
+  font-size: 1rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+  transition: transform 0.2s ease, background 0.2s ease;
+}
+#totalScoreBadge:hover {
+  transform: scale(1.05);
+  background: #d94d1f;
+}
+
 /* Competitions list */
 #compWrap {
    flex: 1;
@@ -126,7 +145,8 @@ body { display: grid; grid-template-columns: 320px 1fr; height: 100vh; }
   padding-right: 6px;
 }
 .competition {
-  padding: 10px 12px;
+  position: relative;
+  padding: 12px 40px 12px 12px; /* give space for the icon */
   margin: 6px 0;
   border: 1px solid var(--sats-border);
   border-radius: 12px;
@@ -134,7 +154,6 @@ body { display: grid; grid-template-columns: 320px 1fr; height: 100vh; }
   cursor: pointer;
   color: var(--sats-text);
   line-height: 1.4;
-  
 }
 .competition.active {
   background: var(--sats-accent);
@@ -147,6 +166,23 @@ body { display: grid; grid-template-columns: 320px 1fr; height: 100vh; }
   border: 1px solid #ddd;
   font-style: italic;
 }
+.delete-icon {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: transparent;
+  border: none;
+  color: var(--sats-primary);
+  font-size: 1.1rem;
+  cursor: pointer;
+  transition: transform 0.15s, color 0.15s;
+}
+
+.delete-icon:hover {
+  color: var(--sats-accent);
+  transform: scale(1.15);
+}
+  
 .compTitle { font-weight: 700; font-size: 1rem; }
 .compDates { font-size: 0.85rem; opacity: 0.9; margin-top: 2px; }
 .competition.active .compDates { opacity: 0.95; }
@@ -412,7 +448,10 @@ tbody tr:nth-child(odd) { background: #fafafa; }
 
 <main id="main">
   <div class="row header-row">
-   <h1 id="mainCompName">No competition</h1>
+   <div class="row header-row">
+  <h1 id="mainCompName">No competition</h1>
+  <div id="totalScoreBadge">Score: 0</div>
+</div>
     <!-- Desktop actions -->
     <div id="compActions">
       <button class="btn ghost" id="btnEnd">End now</button>
@@ -514,19 +553,31 @@ async function loadCompetitions(){
   }
   render();
 }
-async function saveCompetition(comp){
-  await fetch("/.netlify/functions/competitions",{
-    method:"POST", headers:{"Content-Type":"application/json"}, body:JSON.stringify(comp)
+  
+// Lagre (du har allerede denne)
+async function saveCompetition(comp) {
+  await fetch("/.netlify/functions/competitions", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(comp)
   });
   await loadCompetitions();
 }
 
-async function load(){
-  if (!state.activeClub) return;
-  const res = await fetch(`/.netlify/functions/?clubId=${state.activeClub}`);
-  const data = await res.json();
-  state.players = Array.isArray(data) ? data : (data.participants || []);
-  render();
+// 🗑 Ny funksjon for å slette konkurranse
+async function deleteCompetition(id, e) {
+  e.stopPropagation(); // prevents triggering switchComp
+  if (!confirm("Are you sure you want to delete this competition?")) return;
+
+  await fetch("/.netlify/functions/competitions", {
+    method: "DELETE",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ id })
+  });
+
+  delete state.competitions[id];
+  if (state.active === id) state.active = null;
+  await loadCompetitions();
 }
 async function loadParticipants() {
   await load();
@@ -614,7 +665,14 @@ async function inc(pid){
 async function dec(pid){
   const c = active();
   if(!c) return;
-  c.scores[pid] = Math.max(0, (c.scores[pid]||0) - 1);
+
+  const current = c.scores[pid] || 0;
+  if (current <= 0) {
+    alert("Score can't go below zero 👀");
+    return;
+  }
+
+  c.scores[pid] = current - 1;
   c.events.push({ pid, time: Date.now(), delta: -1 });
   await saveCompetition(c);
   render();
@@ -675,6 +733,10 @@ function buildChart(){
       }
     }
   });
+   // 🔹 Calculate and display total score
+const total = Object.values(c.scores || {}).reduce((a, b) => a + b, 0);
+const badge = document.getElementById("totalScoreBadge");
+if (badge) badge.textContent = `Total: ${total}`;
 }
 
 /* --- Render --- */
@@ -701,11 +763,12 @@ function renderCompetitions() {
       (c.id === state.active ? " active" : "") +
       (c.ended ? " finished" : "");
     div.innerHTML = `
-      <div class="compTitle">
-        ${c.name}${c.ended ? " <span class='ended'>(Finished)</span>" : ""}
-      </div>
-      <div class="compDates">${fmtShort(c.start)} – ${fmtShort(c.end)}</div>
-    `;
+  <div class="compTitle">
+    ${c.name}${c.ended ? " <span class='ended'>(Finished)</span>" : ""}
+  </div>
+  <div class="compDates">${fmtShort(c.start)} – ${fmtShort(c.end)}</div>
+  ${c.ended ? `<button class="delete-icon" onclick="deleteCompetition('${c.id}', event)" title="Delete competition">🗑️</button>` : ""}
+`;
     div.onclick = () => switchComp(c.id);
     list.appendChild(div);
   });
