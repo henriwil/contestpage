@@ -112,20 +112,22 @@ body { display: grid; grid-template-columns: 320px 1fr; height: 100vh; }
 }
 
 #totalScoreBadge {
+  margin-top: 14px;
+  display: inline-block;
   background: var(--sats-accent);
   color: #fff;
-  font-weight: 700;
-  font-size: 1.2rem;
-  padding: 10px 18px;
+  padding: 8px 16px;
   border-radius: 999px;
+  font-weight: 700;
+  font-size: 1rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
   box-shadow: 0 4px 10px rgba(0,0,0,0.15);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: transform 0.2s ease;
+  transition: transform 0.2s ease, background 0.2s ease;
 }
 #totalScoreBadge:hover {
-  transform: scale(1.08);
+  transform: scale(1.05);
+  background: #d94d1f;
 }
 
 /* Competitions list */
@@ -448,7 +450,7 @@ tbody tr:nth-child(odd) { background: #fafafa; }
   <div class="row header-row">
    <div class="row header-row">
   <h1 id="mainCompName">No competition</h1>
-  <div id="totalScoreBadge">0</div>
+  <div id="totalScoreBadge">Score: 0</div>
 </div>
     <!-- Desktop actions -->
     <div id="compActions">
@@ -731,10 +733,10 @@ function buildChart(){
       }
     }
   });
-    // 🔹 Calculate and display total score
-  const total = Object.values(c.scores || {}).reduce((a,b)=>a+b,0);
-  const badge = document.getElementById("totalScoreBadge");
-  if (badge) badge.textContent = total;
+   // 🔹 Calculate and display total score
+const total = Object.values(c.scores || {}).reduce((a, b) => a + b, 0);
+const badge = document.getElementById("totalScoreBadge");
+if (badge) badge.textContent = `Total: ${total}`;
 }
 
 /* --- Render --- */
