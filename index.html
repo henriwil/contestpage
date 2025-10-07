@@ -568,6 +568,7 @@ async function saveCompetition(comp) {
 async function deleteCompetition(id, e) {
   e.stopPropagation(); // prevents triggering switchComp
   if (!confirm("Are you sure you want to delete this competition?")) return;
+console.log("Deleting competition ID:", id);
 
   await fetch("/.netlify/functions/competitions", {
     method: "DELETE",
