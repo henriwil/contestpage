@@ -596,7 +596,13 @@ async function loadClubs(){
   document.getElementById("mainCompName").textContent = "Pick competition";
   document.getElementById("drawerCompName").textContent = "Pick competition";
   document.getElementById("leaderboard").innerHTML = "";
-  document.getElementById("chart").getContext("2d").clearRect(0, 0, 9999, 9999);
+
+  // 🧹 Clear chart safely if it exists
+  const chartCanvas = document.getElementById("chart");
+  if (chartCanvas && chart) {
+    chart.destroy();
+    chart = null;
+  }
 
   // Reload data for new club
   loadCompetitions();
