@@ -618,7 +618,7 @@ function newComp(){
     id,name,clubId:state.activeClub,
     start:now.toISOString().slice(0,10),
     end:new Date(now.getTime()+30*86400000).toISOString().slice(0,10),
-    scores:{}, events:[], ended:false};
+    scores:{}, events:[], ended:false,target:0};
   state.active=id; localStorage.setItem("activeComp",id);
   saveCompetition(state.competitions[id]);
 }
