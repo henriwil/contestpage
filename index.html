@@ -919,7 +919,6 @@ document.addEventListener("click", (e)=>{
 window.onload = () => {
   loadClubs();
 
-  // 🟢 Move all event listeners here
   document.getElementById("btnNewComp").onclick = newComp;
   document.getElementById("btnManage").onclick = () => {
     document.getElementById("sidebar").classList.remove("open");
@@ -927,14 +926,20 @@ window.onload = () => {
   };
   document.getElementById("btnDraw").onclick = drawWinner;
   document.getElementById("btnEnd").onclick = endNow;
-  //document.getElementById("btnDrawMobile").onclick = drawWinner;
-  //document.getElementById("btnEndMobile").onclick = endNow;
+
   document.getElementById("btnAddPart").onclick = async () => {
     const v = document.getElementById("newPart").value.trim();
     if (!v) return;
     await addPlayer(v);
     document.getElementById("newPart").value = "";
   };
+
+  // 🔹 Range filter buttons
+  document.getElementById("rangeAll").onclick = () => { chartRange = "all"; buildChart(); };
+  document.getElementById("range30").onclick = () => { chartRange = "30"; buildChart(); };
+  document.getElementById("range7").onclick = () => { chartRange = "7"; buildChart(); };
+
+  // 🎯 Total target handler
   document.getElementById("totalScoreBadge").onclick = () => {
     const c = active();
     if (!c) return;
