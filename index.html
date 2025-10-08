@@ -636,7 +636,10 @@ console.log("Deleting competition ID:", id);
   await loadCompetitions();
 }
 async function loadParticipants() {
-  await load();
+  const res = await fetch(`/.netlify/functions/participants?clubId=${state.activeClub}`);
+  const data = await res.json();
+  state.players = Array.isArray(data) ? data : (data.participants || []);
+  render();
 }
   
 async function saveParticipant(player){
@@ -924,8 +927,8 @@ window.onload = () => {
   };
   document.getElementById("btnDraw").onclick = drawWinner;
   document.getElementById("btnEnd").onclick = endNow;
-  document.getElementById("btnDrawMobile").onclick = drawWinner;
-  document.getElementById("btnEndMobile").onclick = endNow;
+  //document.getElementById("btnDrawMobile").onclick = drawWinner;
+  //document.getElementById("btnEndMobile").onclick = endNow;
   document.getElementById("btnAddPart").onclick = async () => {
     const v = document.getElementById("newPart").value.trim();
     if (!v) return;
