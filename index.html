@@ -112,21 +112,40 @@ body { display: grid; grid-template-columns: 320px 1fr; height: 100vh; }
 }
 
 #totalScoreBadge {
-  display: inline-block;
   background: var(--sats-accent);
   color: #fff;
   padding: 8px 16px;
   border-radius: 999px;
   font-weight: 700;
-  font-size: 1rem;
+  font-size: 0.9rem;
   text-transform: uppercase;
-  letter-spacing: 0.5px;
-  box-shadow: 0 4px 10px rgba(0,0,0,0.15);
-  transition: transform 0.2s ease, background 0.2s ease;
+  letter-spacing: 0.3px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.15);
+  cursor: pointer;
+  transition: all 0.2s ease;
 }
 #totalScoreBadge:hover {
-  transform: scale(1.05);
   background: #d94d1f;
+  transform: translateY(-1px);
+}
+  .competition-header {
+  align-items: flex-start;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 10px 20px;
+}
+
+.header-left {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.header-right {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
 }
 
 /* Competitions list */
@@ -254,6 +273,25 @@ tbody tr:nth-child(odd) { background: #fafafa; }
   margin-top: 12px;
 }
 
+  /* Make participant list scrollable when long */
+#partList {
+  max-height: 50vh;            /* limit height to half the viewport */
+  overflow-y: auto;             /* enable vertical scrolling */
+  padding-right: 6px;           /* room for scrollbar */
+  margin: 10px 0 16px 0;        /* space around the list */
+  -webkit-overflow-scrolling: touch; /* smooth scroll on mobile */
+}
+
+#partList::-webkit-scrollbar {
+  width: 8px;
+}
+#partList::-webkit-scrollbar-thumb {
+  background: rgba(0,0,0,0.15);
+  border-radius: 4px;
+}
+#partList::-webkit-scrollbar-thumb:hover {
+  background: rgba(0,0,0,0.25);
+}
   
 /* ===== Modal ===== */
 #modal {
@@ -338,13 +376,42 @@ tbody tr:nth-child(odd) { background: #fafafa; }
   justify-content: space-between;
   gap: 12px;
 }
-#compActions { display: flex; gap: 10px; }
 .row.dates {
   display: flex;
   align-items: center;
   gap: 12px;
   flex-wrap: wrap;
 }
+#compActions .btn {
+  padding: 6px 12px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  border-width: 1.5px;
+  border-radius: 8px;
+  min-width: auto;
+}
+#compActions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+  .date-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.95rem;
+  color: var(--sats-muted);
+}
+.date-row input[type="date"] {
+  border: 1px solid var(--sats-border);
+  border-radius: 6px;
+  padding: 4px 6px;
+  font-size: 0.9rem;
+}
+
+  
+  
 #mobileActions { display: none; }
 @media(max-width: 900px) {
   .row.header-row { flex-direction: column; align-items: flex-start; gap: 6px; }
@@ -459,27 +526,22 @@ tbody tr:nth-child(odd) { background: #fafafa; }
 </aside>
 
 <main id="main">
-  <div class="row header-row">
-   <div class="row header-row">
-  <h1 id="mainCompName">Create a competition</h1>
-  <div id="totalScoreBadge">Total: 0</div>
-</div>
-    <!-- Desktop actions -->
+ <div class="row header-row competition-header">
+  <div class="header-left">
+    <h1 id="mainCompName">Pick competition</h1>
+    <div class="date-row">
+      📅 <input type="date" id="startDate"> <input type="date" id="endDate">
+    </div>
+  </div>
+
+  <div class="header-right">
+    <div id="totalScoreBadge" title="Click to set or edit target">TOTAL: 0</div>
     <div id="compActions">
       <button class="btn ghost" id="btnEnd">End now</button>
       <button class="btn ghost" id="btnDraw">🎉 Draw winner</button>
     </div>
   </div>
-
-  <div class="row dates">
-    📅 <input type="date" id="startDate"> <input type="date" id="endDate">
-    <span class="muted" id="rangeInfo"></span>
-    <!-- Mobile actions -->
-    <div id="mobileActions">
-      <button class="btn ghost" id="btnEndMobile">End now</button>
-      <button class="btn ghost" id="btnDrawMobile">🎉 Draw winner</button>
-    </div>
-  </div>
+</div>
 
   <section class="grid-2">
     <div class="card">
@@ -541,12 +603,30 @@ async function loadClubs(){
     opt.value=cl.id; opt.textContent=cl.name;
     sel.appendChild(opt);
   });
-  sel.onchange=e=>{
-    state.activeClub=e.target.value;
-    localStorage.setItem("activeClub", state.activeClub);
-    loadCompetitions();
-    loadParticipants();
-  };
+  sel.onchange = e => {
+  state.activeClub = e.target.value;
+  localStorage.setItem("activeClub", state.activeClub);
+
+  // 🔹 Clear current active competition when switching clubs
+  state.active = null;
+  localStorage.removeItem("activeComp");
+
+  // 🔹 Reset display to “Pick competition”
+  document.getElementById("mainCompName").textContent = "Pick competition";
+  document.getElementById("drawerCompName").textContent = "Pick competition";
+  document.getElementById("leaderboard").innerHTML = "";
+
+  // 🧹 Clear chart safely if it exists
+  const chartCanvas = document.getElementById("chart");
+  if (chartCanvas && chart) {
+    chart.destroy();
+    chart = null;
+  }
+
+  // Reload data for new club
+  loadCompetitions();
+  loadParticipants();
+};
   const savedClub=localStorage.getItem("activeClub");
   state.activeClub=savedClub||clubs[0].id;
   sel.value=state.activeClub;
@@ -593,7 +673,10 @@ console.log("Deleting competition ID:", id);
   await loadCompetitions();
 }
 async function loadParticipants() {
-  await load();
+  const res = await fetch(`/.netlify/functions/participants?clubId=${state.activeClub}`);
+  const data = await res.json();
+  state.players = Array.isArray(data) ? data : (data.participants || []);
+  render();
 }
   
 async function saveParticipant(player){
@@ -749,7 +832,17 @@ function buildChart(){
    // 🔹 Calculate and display total score
 const total = Object.values(c.scores || {}).reduce((a, b) => a + b, 0);
 const badge = document.getElementById("totalScoreBadge");
-if (badge) badge.textContent = `Total: ${total}`;
+
+if (badge) {
+  if (c.target && c.target > 0) {
+    const pct = Math.min(100, Math.round((total / c.target) * 100));
+    badge.textContent = `Total: ${total} / ${c.target} (${pct}%)`;
+    badge.title = "Click to edit target";
+  } else {
+    badge.textContent = `Total: ${total}`;
+    badge.title = "Click to set target";
+  }
+}
 }
 
 /* --- Render --- */
@@ -841,34 +934,8 @@ function closeModal(){document.getElementById("modal").style.display="none";}
 function drawWinner(){const c=active(); const entries=[]; for(const [pid,score] of Object.entries(c.scores)){for(let i=0;i<score;i++)entries.push(state.players.find(p=>p.id===pid)?.name);} if(!entries.length){alert("No points");return;} alert("Winner: "+entries[Math.floor(Math.random()*entries.length)]);}
 function endNow(){const c=active(); c.ended=true; c.end=new Date().toISOString().slice(0,10); saveCompetition(c);}
 
-/* --- Events --- */
-document.getElementById("btnNewComp").onclick=newComp;
-document.getElementById("btnManage").onclick = () => {
-  document.getElementById("sidebar").classList.remove("open"); // collapse sidebar
-  openModal();
-};
 
-/* Desktop actions */
-document.getElementById("btnDraw").onclick=drawWinner;
-document.getElementById("btnEnd").onclick=endNow;
-
-/* Mobile actions */
-document.getElementById("btnDrawMobile").onclick=drawWinner;
-document.getElementById("btnEndMobile").onclick=endNow;
-
-  /* Add Button actions */
- document.getElementById("btnAddPart").onclick = async () => {
-  const v = document.getElementById("newPart").value.trim();
-  if (!v) return;
-  await addPlayer(v);
-  document.getElementById("newPart").value = "";
-};
-
-/* Range buttons (you can add logic if you filter events by range later) */
-document.getElementById("rangeAll").onclick=()=>{ chartRange="all"; buildChart(); };
-document.getElementById("range30").onclick=()=>{ chartRange="30"; buildChart(); };
-document.getElementById("range7").onclick=()=>{ chartRange="7"; buildChart(); };
-
+  
 /* --- Drawer handle toggle (mobile) --- */
 const drawer = document.getElementById("sidebar");
 const handle = document.getElementById("drawerHandle");
@@ -883,8 +950,55 @@ document.addEventListener("click", (e)=>{
   }
 });
 
+  
+
 /* --- Start --- */
-window.onload = () => { loadClubs(); };
+window.onload = () => {
+  loadClubs();
+
+  document.getElementById("btnNewComp").onclick = newComp;
+  document.getElementById("btnManage").onclick = () => {
+    document.getElementById("sidebar").classList.remove("open");
+    openModal();
+  };
+  document.getElementById("btnDraw").onclick = drawWinner;
+  document.getElementById("btnEnd").onclick = endNow;
+
+  document.getElementById("btnAddPart").onclick = async () => {
+    const v = document.getElementById("newPart").value.trim();
+    if (!v) return;
+    await addPlayer(v);
+    document.getElementById("newPart").value = "";
+  };
+
+  // 🔹 Range filter buttons
+  document.getElementById("rangeAll").onclick = () => { chartRange = "all"; buildChart(); };
+  document.getElementById("range30").onclick = () => { chartRange = "30"; buildChart(); };
+  document.getElementById("range7").onclick = () => { chartRange = "7"; buildChart(); };
+
+  // 🎯 Total target handler
+  document.getElementById("totalScoreBadge").onclick = () => {
+    const c = active();
+    if (!c) return;
+
+    const val = prompt(
+      c.target && c.target > 0
+        ? `Edit target (current: ${c.target})`
+        : "Set target total score:",
+      c.target || ""
+    );
+    if (val === null) return;
+    const num = parseInt(val);
+    if (isNaN(num) || num < 0) {
+      alert("Please enter a valid number.");
+      return;
+    }
+
+    c.target = num;
+    saveCompetition(c);
+    render();
+  };
+};
 </script>
 </body>
 </html>
