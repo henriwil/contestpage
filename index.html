@@ -112,7 +112,6 @@ body { display: grid; grid-template-columns: 320px 1fr; height: 100vh; }
 }
 
 #totalScoreBadge {
-  margin-top: 14px;
   display: inline-block;
   background: var(--sats-accent);
   color: #fff;
@@ -192,6 +191,7 @@ body { display: grid; grid-template-columns: 320px 1fr; height: 100vh; }
 #btnNewComp {
   position: sticky;
   top: 0;
+  margin-top:10px;
   z-index: 2;
   background: #fff;
   color: var(--sats-primary);
@@ -243,6 +243,18 @@ thead th {
 tbody td { padding: 12px 8px; border-bottom: 1px solid var(--sats-border); }
 tbody tr:nth-child(odd) { background: #fafafa; }
 
+  .empty-state {
+  text-align: center;
+  color: var(--sats-muted);
+  padding: 40px 10px;
+  font-size: 1.1rem;
+  font-weight: 500;
+}
+.empty-state button {
+  margin-top: 12px;
+}
+
+  
 /* ===== Modal ===== */
 #modal {
   position: fixed;
@@ -427,7 +439,7 @@ tbody tr:nth-child(odd) { background: #fafafa; }
 <aside id="sidebar">
   <div id="drawerHandle">
     <div id="drawerTitle">Selected competition</div>
-    <div id="drawerCompName">No competition</div>
+    <div id="drawerCompName">Create a competition</div>
   </div>
 
   <div id="sidebarInner">
@@ -438,19 +450,19 @@ tbody tr:nth-child(odd) { background: #fafafa; }
 
     <h2>Competitions</h2>
     <div id="compWrap">
-      <button class="btn" id="btnNewComp">+ New competition</button>
+      <button class="btn" id="btnNewComp"> Start new competition</button>
       <div id="competitions"></div>
     </div>
 
-    <button class="btn" id="btnManage">Manage participants</button>
+    <button class="btn" id="btnManage">Add / Remove employees</button>
   </div>
 </aside>
 
 <main id="main">
   <div class="row header-row">
    <div class="row header-row">
-  <h1 id="mainCompName">No competition</h1>
-  <div id="totalScoreBadge">Score: 0</div>
+  <h1 id="mainCompName">Create a competition</h1>
+  <div id="totalScoreBadge">Total: 0</div>
 </div>
     <!-- Desktop actions -->
     <div id="compActions">
@@ -473,7 +485,7 @@ tbody tr:nth-child(odd) { background: #fafafa; }
     <div class="card">
       <h2>Leaderboard</h2>
       <table>
-        <thead><tr><th>#</th><th>Name</th><th>Score</th><th>Action</th></tr></thead>
+        <thead><tr><th>#</th><th>Name</th><th>Score</th><th></th></tr></thead>
         <tbody id="leaderboard"></tbody>
       </table>
     </div>
@@ -606,7 +618,7 @@ function newComp(){
     id,name,clubId:state.activeClub,
     start:now.toISOString().slice(0,10),
     end:new Date(now.getTime()+30*86400000).toISOString().slice(0,10),
-    scores:{}, events:[], ended:false};
+    scores:{}, events:[], ended:false,target:0};
   state.active=id; localStorage.setItem("activeComp",id);
   saveCompetition(state.competitions[id]);
 }
@@ -782,14 +794,43 @@ function render(){
   document.getElementById("startDate").value=c.start; document.getElementById("endDate").value=c.end;
   document.getElementById("startDate").onchange=e=>{c.start=e.target.value; saveCompetition(c);};
   document.getElementById("endDate").onchange=e=>{c.end=e.target.value; saveCompetition(c);};
-  const tbody=document.getElementById("leaderboard"); tbody.innerHTML="";
-  state.players.map(p=>({id:p.id,name:p.name,score:c.scores[p.id]||0}))
-    .sort((a,b)=>b.score-a.score).forEach((p,i)=>{const tr=document.createElement("tr");
-      tr.innerHTML=`<td>${i+1}</td><td>${p.name}</td><td><b>${p.score}</b></td>
-      <td class="scoreBtns"><button class="btn primary" onclick="inc('${p.id}')">+1</button>
-      <button class="btn ghost small" onclick="dec('${p.id}')">-1</button></td>`;
-      tbody.appendChild(tr);});
-  buildChart();
+  const tbody = document.getElementById("leaderboard");
+tbody.innerHTML = "";
+
+// Lag rader for spillere
+const rows = state.players
+  .map(p => ({ id: p.id, name: p.name, score: c.scores[p.id] || 0 }))
+  .sort((a, b) => b.score - a.score);
+
+if (rows.length === 0) {
+  // 👋 tom tilstand
+  const tr = document.createElement("tr");
+  const td = document.createElement("td");
+  td.colSpan = 4;
+  td.innerHTML = `
+    <div class="empty-state">
+      👋 No employees yet<br>
+      <button class="btn ghost small" onclick="openModal()">Add / Remove employees</button>
+    </div>`;
+  tr.appendChild(td);
+  tbody.appendChild(tr);
+} else {
+  // 🔢 vis vanlige rader
+  rows.forEach((p, i) => {
+    const tr = document.createElement("tr");
+    tr.innerHTML = `
+      <td>${i + 1}</td>
+      <td>${p.name}</td>
+      <td><b>${p.score}</b></td>
+      <td class="scoreBtns">
+        <button class="btn primary" onclick="inc('${p.id}')">+1</button>
+        <button class="btn ghost small" onclick="dec('${p.id}')">-1</button>
+      </td>`;
+    tbody.appendChild(tr);
+  });
+}
+
+buildChart();
 }
 
 /* --- Modal --- */
