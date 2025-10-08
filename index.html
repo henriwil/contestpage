@@ -111,22 +111,41 @@ body { display: grid; grid-template-columns: 320px 1fr; height: 100vh; }
   background: #fff;
 }
 
-#totalScoreBadge{
-  display: inline-block;
+#totalScoreBadge {
   background: var(--sats-accent);
   color: #fff;
   padding: 8px 16px;
   border-radius: 999px;
   font-weight: 700;
-  font-size: 1rem;
+  font-size: 0.9rem;
   text-transform: uppercase;
-  letter-spacing: 0.5px;
-  box-shadow: 0 4px 10px rgba(0,0,0,0.15);
-  transition: transform 0.2s ease, background 0.2s ease;
+  letter-spacing: 0.3px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.15);
+  cursor: pointer;
+  transition: all 0.2s ease;
 }
 #totalScoreBadge:hover {
-  transform: scale(1.05);
   background: #d94d1f;
+  transform: translateY(-1px);
+}
+  .competition-header {
+  align-items: flex-start;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 10px 20px;
+}
+
+.header-left {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.header-right {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
 }
 
 /* Competitions list */
@@ -338,13 +357,42 @@ tbody tr:nth-child(odd) { background: #fafafa; }
   justify-content: space-between;
   gap: 12px;
 }
-#compActions { display: flex; gap: 10px; }
 .row.dates {
   display: flex;
   align-items: center;
   gap: 12px;
   flex-wrap: wrap;
 }
+#compActions .btn {
+  padding: 6px 12px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  border-width: 1.5px;
+  border-radius: 8px;
+  min-width: auto;
+}
+#compActions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+  .date-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.95rem;
+  color: var(--sats-muted);
+}
+.date-row input[type="date"] {
+  border: 1px solid var(--sats-border);
+  border-radius: 6px;
+  padding: 4px 6px;
+  font-size: 0.9rem;
+}
+
+  
+  
 #mobileActions { display: none; }
 @media(max-width: 900px) {
   .row.header-row { flex-direction: column; align-items: flex-start; gap: 6px; }
@@ -459,29 +507,22 @@ tbody tr:nth-child(odd) { background: #fafafa; }
 </aside>
 
 <main id="main">
-  <div class="row header-row">
-  <h1 id="mainCompName">No competition</h1>
-
-  <div style="display:flex; align-items:center; gap:10px;">
-    <div id="totalScoreBadge" title="Click to set or edit target">Total: 0</div>
-  </div>
-
-  <!-- Desktop actions -->
-  <div id="compActions">
-    <button class="btn ghost" id="btnEnd">End now</button>
-    <button class="btn ghost" id="btnDraw">🎉 Draw winner</button>
-  </div>
-</div>
-
-  <div class="row dates">
-    📅 <input type="date" id="startDate"> <input type="date" id="endDate">
-    <span class="muted" id="rangeInfo"></span>
-    <!-- Mobile actions -->
-    <div id="mobileActions">
-      <button class="btn ghost" id="btnEndMobile">End now</button>
-      <button class="btn ghost" id="btnDrawMobile">🎉 Draw winner</button>
+ <div class="row header-row competition-header">
+  <div class="header-left">
+    <h1 id="mainCompName">Pick competition</h1>
+    <div class="date-row">
+      📅 <input type="date" id="startDate"> <input type="date" id="endDate">
     </div>
   </div>
+
+  <div class="header-right">
+    <div id="totalScoreBadge" title="Click to set or edit target">TOTAL: 0</div>
+    <div id="compActions">
+      <button class="btn ghost" id="btnEnd">End now</button>
+      <button class="btn ghost" id="btnDraw">🎉 Draw winner</button>
+    </div>
+  </div>
+</div>
 
   <section class="grid-2">
     <div class="card">
