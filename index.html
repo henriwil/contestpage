@@ -461,8 +461,10 @@ tbody tr:nth-child(odd) { background: #fafafa; }
 <main id="main">
   <div class="row header-row">
    <div class="row header-row">
-  <h1 id="mainCompName">Create a competition</h1>
+  <h1 id="mainCompName">No competition</h1>
+<div style="display:flex; align-items:center; gap:10px;">
   <div id="totalScoreBadge">Total: 0</div>
+  <button class="btn ghost small" id="btnSetTarget">🎯 Set target</button>
 </div>
     <!-- Desktop actions -->
     <div id="compActions">
@@ -749,7 +751,14 @@ function buildChart(){
    // 🔹 Calculate and display total score
 const total = Object.values(c.scores || {}).reduce((a, b) => a + b, 0);
 const badge = document.getElementById("totalScoreBadge");
-if (badge) badge.textContent = `Total: ${total}`;
+
+if (badge) {
+  if (c.target && c.target > 0) {
+    const pct = Math.min(100, Math.round((total / c.target) * 100));
+    badge.textContent = `Total: ${total} / ${c.target} (${pct}%)`;
+  } else {
+    badge.textContent = `Total: ${total}`;
+  }
 }
 
 /* --- Render --- */
@@ -869,6 +878,25 @@ document.getElementById("rangeAll").onclick=()=>{ chartRange="all"; buildChart()
 document.getElementById("range30").onclick=()=>{ chartRange="30"; buildChart(); };
 document.getElementById("range7").onclick=()=>{ chartRange="7"; buildChart(); };
 
+/*Listen for set target*/
+
+  document.getElementById("btnSetTarget").onclick = () => {
+  const c = active();
+  if (!c) return;
+
+  const val = prompt("Enter target total score:", c.target || "");
+  if (val === null) return; // cancelled
+  const num = parseInt(val);
+  if (isNaN(num) || num < 0) {
+    alert("Please enter a valid number.");
+    return;
+  }
+
+  c.target = num;
+  saveCompetition(c);
+  render();
+};
+  
 /* --- Drawer handle toggle (mobile) --- */
 const drawer = document.getElementById("sidebar");
 const handle = document.getElementById("drawerHandle");
@@ -882,6 +910,8 @@ document.addEventListener("click", (e)=>{
     drawer.classList.remove("open");
   }
 });
+
+  
 
 /* --- Start --- */
 window.onload = () => { loadClubs(); };
