@@ -963,7 +963,47 @@ document.addEventListener("click", (e)=>{
   
 
 /* --- Start --- */
-window.onload = () => { loadClubs(); };
+window.onload = () => {
+  loadClubs();
+
+  // 🟢 Move all event listeners here
+  document.getElementById("btnNewComp").onclick = newComp;
+  document.getElementById("btnManage").onclick = () => {
+    document.getElementById("sidebar").classList.remove("open");
+    openModal();
+  };
+  document.getElementById("btnDraw").onclick = drawWinner;
+  document.getElementById("btnEnd").onclick = endNow;
+  document.getElementById("btnDrawMobile").onclick = drawWinner;
+  document.getElementById("btnEndMobile").onclick = endNow;
+  document.getElementById("btnAddPart").onclick = async () => {
+    const v = document.getElementById("newPart").value.trim();
+    if (!v) return;
+    await addPlayer(v);
+    document.getElementById("newPart").value = "";
+  };
+  document.getElementById("totalScoreBadge").onclick = () => {
+    const c = active();
+    if (!c) return;
+
+    const val = prompt(
+      c.target && c.target > 0
+        ? `Edit target (current: ${c.target})`
+        : "Set target total score:",
+      c.target || ""
+    );
+    if (val === null) return;
+    const num = parseInt(val);
+    if (isNaN(num) || num < 0) {
+      alert("Please enter a valid number.");
+      return;
+    }
+
+    c.target = num;
+    saveCompetition(c);
+    render();
+  };
+};
 </script>
 </body>
 </html>
