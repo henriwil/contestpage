@@ -584,12 +584,24 @@ async function loadClubs(){
     opt.value=cl.id; opt.textContent=cl.name;
     sel.appendChild(opt);
   });
-  sel.onchange=e=>{
-    state.activeClub=e.target.value;
-    localStorage.setItem("activeClub", state.activeClub);
-    loadCompetitions();
-    loadParticipants();
-  };
+  sel.onchange = e => {
+  state.activeClub = e.target.value;
+  localStorage.setItem("activeClub", state.activeClub);
+
+  // 🔹 Clear current active competition when switching clubs
+  state.active = null;
+  localStorage.removeItem("activeComp");
+
+  // 🔹 Reset display to “Pick competition”
+  document.getElementById("mainCompName").textContent = "Pick competition";
+  document.getElementById("drawerCompName").textContent = "Pick competition";
+  document.getElementById("leaderboard").innerHTML = "";
+  document.getElementById("chart").getContext("2d").clearRect(0, 0, 9999, 9999);
+
+  // Reload data for new club
+  loadCompetitions();
+  loadParticipants();
+};
   const savedClub=localStorage.getItem("activeClub");
   state.activeClub=savedClub||clubs[0].id;
   sel.value=state.activeClub;
