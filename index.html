@@ -111,7 +111,7 @@ body { display: grid; grid-template-columns: 320px 1fr; height: 100vh; }
   background: #fff;
 }
 
-#totalScoreBadge {
+#totalScoreBadge{
   display: inline-block;
   background: var(--sats-accent);
   color: #fff;
@@ -463,8 +463,7 @@ tbody tr:nth-child(odd) { background: #fafafa; }
    <div class="row header-row">
   <h1 id="mainCompName">No competition</h1>
 <div style="display:flex; align-items:center; gap:10px;">
-  <div id="totalScoreBadge">Total: 0</div>
-  <button class="btn ghost small" id="btnSetTarget">🎯 Set target</button>
+  <div id="totalScoreBadge" title="Click to edit target">Total: 0</div>
 </div>
     <!-- Desktop actions -->
     <div id="compActions">
@@ -756,8 +755,10 @@ if (badge) {
   if (c.target && c.target > 0) {
     const pct = Math.min(100, Math.round((total / c.target) * 100));
     badge.textContent = `Total: ${total} / ${c.target} (${pct}%)`;
+    badge.title = "Click to edit target";
   } else {
     badge.textContent = `Total: ${total}`;
+    badge.title = "Click to set target";
   }
 }
 }
@@ -881,11 +882,16 @@ document.getElementById("range7").onclick=()=>{ chartRange="7"; buildChart(); };
 
 /*Listen for set target*/
 
-  document.getElementById("btnSetTarget").onclick = () => {
+  document.getElementById("totalScoreBadge").onclick = () => {
   const c = active();
   if (!c) return;
 
-  const val = prompt("Enter target total score:", c.target || "");
+  const val = prompt(
+    c.target && c.target > 0
+      ? `Edit target (current: ${c.target})`
+      : "Set target total score:",
+    c.target || ""
+  );
   if (val === null) return; // cancelled
   const num = parseInt(val);
   if (isNaN(num) || num < 0) {
