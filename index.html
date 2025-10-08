@@ -460,17 +460,18 @@ tbody tr:nth-child(odd) { background: #fafafa; }
 
 <main id="main">
   <div class="row header-row">
-   <div class="row header-row">
   <h1 id="mainCompName">No competition</h1>
-<div style="display:flex; align-items:center; gap:10px;">
-  <div id="totalScoreBadge" title="Click to edit target">Total: 0</div>
-</div>
-    <!-- Desktop actions -->
-    <div id="compActions">
-      <button class="btn ghost" id="btnEnd">End now</button>
-      <button class="btn ghost" id="btnDraw">🎉 Draw winner</button>
-    </div>
+
+  <div style="display:flex; align-items:center; gap:10px;">
+    <div id="totalScoreBadge" title="Click to set or edit target">Total: 0</div>
   </div>
+
+  <!-- Desktop actions -->
+  <div id="compActions">
+    <button class="btn ghost" id="btnEnd">End now</button>
+    <button class="btn ghost" id="btnDraw">🎉 Draw winner</button>
+  </div>
+</div>
 
   <div class="row dates">
     📅 <input type="date" id="startDate"> <input type="date" id="endDate">
