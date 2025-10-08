@@ -273,6 +273,25 @@ tbody tr:nth-child(odd) { background: #fafafa; }
   margin-top: 12px;
 }
 
+  /* Make participant list scrollable when long */
+#partList {
+  max-height: 50vh;            /* limit height to half the viewport */
+  overflow-y: auto;             /* enable vertical scrolling */
+  padding-right: 6px;           /* room for scrollbar */
+  margin: 10px 0 16px 0;        /* space around the list */
+  -webkit-overflow-scrolling: touch; /* smooth scroll on mobile */
+}
+
+#partList::-webkit-scrollbar {
+  width: 8px;
+}
+#partList::-webkit-scrollbar-thumb {
+  background: rgba(0,0,0,0.15);
+  border-radius: 4px;
+}
+#partList::-webkit-scrollbar-thumb:hover {
+  background: rgba(0,0,0,0.25);
+}
   
 /* ===== Modal ===== */
 #modal {
